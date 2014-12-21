@@ -1,0 +1,1 @@
+place any csproj here that contain unit tests. Keeping them in a seperate folder helps test runners find which projects to execute

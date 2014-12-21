@@ -1,0 +1,3860 @@
+﻿{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0",
+        "title": "Boss.WebService"
+    },
+    "host": "localhost:27743",
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/Core/Account/{accountid}": {
+            "get": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_GetAccountById",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountid",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Account"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/{accountId}/Notes/Add": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_AddAccountNote",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "noteParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/AccountNoteParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/{accountId}/SetServiceTreeDirty": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_SetServiceTreeDirty",
+                "consumes": [],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/ApplyRestoreFees": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_ApplyRestoreFees",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "restoreFeeParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/RestoreFeeParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/AddOneTimeCharge": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_AddOneTimeCharge",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "charge",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/OneTimeCharge"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/GetCompanyCodeByState/{state}": {
+            "get": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_GetCompanyCodeByState",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "state",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CompanyCode"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/PhysicalAddress": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_CreatePhysicalAddress",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "physicalAddress",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/PhysicalAddress"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/PhysicalAddress"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/PhysicalAddress/{id}": {
+            "get": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_GetPhysicalAddressById",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/PhysicalAddress"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/PhysicalAddress/{telphoneNumber}": {
+            "get": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_GetPhysicalAddressByTN",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "telephoneNumber",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "telphoneNumber",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/PhysicalAddress"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/PhysicalAddress/{telphoneNumber}/DisconnectLine": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_DisconnectLine",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "telphoneNumber",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "disconnectParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DisconnectParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/PhysicalAddress/{telphoneNumber}/AddServiceProduct": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_AddServiceProduct",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "telphoneNumber",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "serviceProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ServiceProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/PhysicalAddress/{telphoneNumber}/DisconnectServiceProduct/{serviceProductId}": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_DisconnectServiceProduct",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "telphoneNumber",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "serviceProductId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "disconnectParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DisconnectParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/PhysicalAddress/{telphoneNumber}/UpdateServiceProductQty/{serviceProductId}": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_UpdateServiceProductQty",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "telphoneNumber",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "serviceProductId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "newQty",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "format": "int32",
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/PhysicalAddress/AddSerialNumber": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_AddSerialNo",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "serialNumber",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/SerialNo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/SerialNo"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/Circuit/UpdateCircuitId": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_UpdateCircuitId",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "updateCircuitIdParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateCircuitIdParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/Circuit/UpdateNwAinCircuitId": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_UpdateNwAinCircuitId",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "updateNwAinCircuitParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateNwAinCircuitParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Core/Account/Circuit/NwAinCircuitId/{nwAinCircuitId}": {
+            "get": {
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "Account_GetAccountCircuitsByNwAinCircuitId",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "nwAinCircuitId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/AccountCircuit"
+                            }
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/assetmanagement/circuit/UpdateMainSegmentCircuitId/{id}/{circuitId}": {
+            "get": {
+                "tags": [
+                    "Circuit"
+                ],
+                "operationId": "Circuit_UpdateMainSegmentCircuitId",
+                "consumes": [],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "circuitId",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Void"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/assetmanagement/circuit/UpdateMainSegmentInstallDetails/{id}/{orderid}/{installDate}": {
+            "get": {
+                "tags": [
+                    "Circuit"
+                ],
+                "operationId": "Circuit_UpdateMainSegmentInstallDetails",
+                "consumes": [],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "orderid",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "installDate",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Void"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/assetmanagement/circuit/available/{portTypeId}/{clli}/{qty}": {
+            "get": {
+                "tags": [
+                    "Circuit"
+                ],
+                "operationId": "Circuit_GetAvailableCircuitsByPortTypeAndClli",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "portTypeId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "clli",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "qty",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CircuitDTO"
+                            }
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/assetmanagement/circuit/associate/{nwAinCircuitId}/{supplierId}/{segmentStatusId}": {
+            "post": {
+                "tags": [
+                    "Circuit"
+                ],
+                "operationId": "Circuit_AssociateNewCircuit",
+                "consumes": [],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "nwAinCircuitId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "supplierId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "segmentStatusId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/assetmanagement/circuit/{nwCircuitId}": {
+            "get": {
+                "tags": [
+                    "Circuit"
+                ],
+                "operationId": "Circuit_GetCircuitByNwCircuitId",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "nwCircuitId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Circuit"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/assetmanagement/circuit/{nwCircuitId}/cfa": {
+            "get": {
+                "tags": [
+                    "Circuit"
+                ],
+                "operationId": "Circuit_GetCfaByNwCircuitId",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "nwCircuitId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CFA"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/assetmanagement/circuit/portTypes/{portTypeId}": {
+            "get": {
+                "tags": [
+                    "Circuit"
+                ],
+                "operationId": "Circuit_GetPortTypes",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "portTypeId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "format": "int32",
+                            "enum": [
+                                0,
+                                1,
+                                3,
+                                5,
+                                6,
+                                7,
+                                8,
+                                9,
+                                10,
+                                11,
+                                12,
+                                13,
+                                14,
+                                18,
+                                26,
+                                27,
+                                28,
+                                29,
+                                30,
+                                31,
+                                32,
+                                33,
+                                34
+                            ],
+                            "type": "integer"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/assetmanagement/colocation/hominglist/{clli}": {
+            "get": {
+                "tags": [
+                    "Colocation"
+                ],
+                "operationId": "Colocation_GetHomingColocationsByClli",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "clli",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ColocationHoming"
+                            }
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/assetmanagement/colocation/{clli}": {
+            "get": {
+                "tags": [
+                    "Colocation"
+                ],
+                "operationId": "Colocation_GetColocationByClli",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "clli",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Colocation"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/assetmanagement/colocation/colocationByCfa": {
+            "post": {
+                "tags": [
+                    "Colocation"
+                ],
+                "operationId": "Colocation_GetColocationByCfa",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "cfa",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CFA"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Colocation"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Contract/ContractTypes": {
+            "get": {
+                "tags": [
+                    "Contract"
+                ],
+                "operationId": "Contract_GetContractTypes",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Object"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/assetmanagement/IpAssignment/GetIpList/{maskbits}/{lessthan}/{clli}/{subnettypeid}/{supplier}": {
+            "get": {
+                "tags": [
+                    "IpAssignment"
+                ],
+                "operationId": "IpAssignment_GetIpList",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "maskbits",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "lessthan",
+                        "in": "path",
+                        "required": true,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "clli",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "subnettypeid",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/IpAddress"
+                            }
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Product/{productId}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "operationId": "Product_GetProductById",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Product"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/Product/{usoc}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "operationId": "Product_GetProductById",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "usoc",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Product"
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/api/Values": {
+            "get": {
+                "tags": [
+                    "Values"
+                ],
+                "operationId": "Values_Get",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "deprecated": false
+            },
+            "post": {
+                "tags": [
+                    "Values"
+                ],
+                "operationId": "Values_Post",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "value",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/api/Values/{id}": {
+            "get": {
+                "tags": [
+                    "Values"
+                ],
+                "operationId": "Values_Get",
+                "consumes": [],
+                "produces": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "deprecated": false
+            },
+            "put": {
+                "tags": [
+                    "Values"
+                ],
+                "operationId": "Values_Put",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/xml",
+                    "text/xml",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "value",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            },
+            "delete": {
+                "tags": [
+                    "Values"
+                ],
+                "operationId": "Values_Delete",
+                "consumes": [],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "deprecated": false
+            }
+        }
+    },
+    "definitions": {
+        "Account": {
+            "type": "object",
+            "properties": {
+                "AccountId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Address1": {
+                    "type": "string"
+                },
+                "Address2": {
+                    "type": "string"
+                },
+                "Address3": {
+                    "type": "string"
+                },
+                "City": {
+                    "type": "string"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "Zip": {
+                    "type": "string"
+                },
+                "Phone1": {
+                    "type": "string"
+                },
+                "Phone2": {
+                    "type": "string"
+                },
+                "Fax": {
+                    "type": "string"
+                },
+                "TaxId": {
+                    "type": "string"
+                },
+                "LastUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "UshaAccount": {
+                    "type": "string"
+                },
+                "CasAccount": {
+                    "type": "string"
+                },
+                "BillingDay": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Sic": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AgentId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "TaxExempt": {
+                    "type": "boolean"
+                },
+                "FinanceExempt": {
+                    "type": "boolean"
+                },
+                "CodeWord": {
+                    "type": "string"
+                },
+                "HintQuestion": {
+                    "type": "string"
+                },
+                "HintAnswer": {
+                    "type": "string"
+                },
+                "Email": {
+                    "type": "string"
+                },
+                "FtpFile": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Bankrupt": {
+                    "type": "boolean"
+                },
+                "DsmDiscount": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "EBill": {
+                    "type": "boolean"
+                },
+                "EPay": {
+                    "type": "boolean"
+                },
+                "AffinityGroupId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Elite": {
+                    "type": "boolean"
+                },
+                "CodeBlue": {
+                    "type": "boolean"
+                },
+                "EliteId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "EBillDate": {
+                    "type": "string"
+                },
+                "EPayDate": {
+                    "type": "string"
+                },
+                "MarketingPromoId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "MarketingPromoUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "MarketingPromoDate": {
+                    "type": "string"
+                },
+                "BadCheckDate": {
+                    "type": "string"
+                },
+                "AllowMarketingEmail": {
+                    "type": "boolean"
+                },
+                "TaxCodeExemptId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "InCityLimits": {
+                    "type": "boolean"
+                },
+                "SavePaymentInfo": {
+                    "type": "boolean"
+                },
+                "SuppressLdPrint": {
+                    "type": "boolean"
+                },
+                "ServiceCenterId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PaperInvoiceFeeExempt": {
+                    "type": "boolean"
+                },
+                "PaperInvoiceFeeExemptDate": {
+                    "type": "string"
+                },
+                "Prepaid": {
+                    "type": "boolean"
+                },
+                "LanguageId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PrintByBillingGroup": {
+                    "type": "boolean"
+                },
+                "WaivePayphoneDaAdminFee": {
+                    "type": "boolean"
+                },
+                "LineOfBusinessId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PaymentPlus": {
+                    "type": "boolean"
+                },
+                "PricingPlanId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountProducts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "AccountProduct"
+                    }
+                },
+                "PhysicalAddresses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "PhysicalAddress"
+                    }
+                },
+                "AccountNotes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "AccountNote"
+                    }
+                },
+                "AccountContacts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "AccountContact"
+                    }
+                }
+            }
+        },
+        "AccountProduct": {
+            "type": "object",
+            "properties": {
+                "AccountProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PhysicalAddressId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "StartDate": {
+                    "type": "string"
+                },
+                "EndDate": {
+                    "type": "string"
+                },
+                "Qty": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "StartFlag": {
+                    "type": "boolean"
+                },
+                "EndFlag": {
+                    "type": "boolean"
+                },
+                "UserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ChangeDate": {
+                    "type": "string"
+                },
+                "ChangeTime": {
+                    "type": "string"
+                },
+                "InputStartDate": {
+                    "type": "string"
+                },
+                "InputEndDate": {
+                    "type": "string"
+                },
+                "InputStartUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "InputEndUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Amount": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "AmountEndDate": {
+                    "type": "string"
+                },
+                "SupplierId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AmountOverrideComment": {
+                    "type": "string"
+                },
+                "AmountOverrideUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AmountOverrideDate": {
+                    "type": "string"
+                },
+                "ResaleReasonId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SupplierChangeDate": {
+                    "type": "string"
+                },
+                "SupplierChangeUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PreviousSupplierId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SoldDate": {
+                    "type": "string"
+                },
+                "SoldUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "IncrPricePlanId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "IncrRate": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "IncrRateEndDate": {
+                    "type": "string"
+                },
+                "AccountCircuitId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ClliAmount": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "LastInvoicedDate": {
+                    "type": "string"
+                },
+                "LineActivityTypeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PackageAccountProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ActionId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "EvdoRateId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountCircuit": {
+                    "$ref": "AccountCircuit"
+                },
+                "Account": {
+                    "$ref": "Account"
+                },
+                "PhysicalAddress": {
+                    "$ref": "PhysicalAddress"
+                },
+                "ServiceDiscounts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "ServiceDiscount"
+                    }
+                },
+                "Product": {
+                    "$ref": "Product"
+                },
+                "Supplier": {
+                    "$ref": "Supplier"
+                },
+                "ServiceAttributes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "ServiceAttribute"
+                    }
+                }
+            }
+        },
+        "PhysicalAddress": {
+            "type": "object",
+            "properties": {
+                "PhysicalAddressId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Clli": {
+                    "type": "string"
+                },
+                "Locked": {
+                    "type": "boolean"
+                },
+                "BillingGroupId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "HouseNumber": {
+                    "type": "string"
+                },
+                "HouseNumberSuffix": {
+                    "type": "string"
+                },
+                "PrefixDirectional": {
+                    "type": "string"
+                },
+                "StreetName": {
+                    "type": "string"
+                },
+                "StreetSuffix": {
+                    "type": "string"
+                },
+                "PostDirectional": {
+                    "type": "string"
+                },
+                "Route": {
+                    "type": "string"
+                },
+                "Box": {
+                    "type": "string"
+                },
+                "City": {
+                    "type": "string"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "ZipCode": {
+                    "type": "string"
+                },
+                "ZipPlus4": {
+                    "type": "string"
+                },
+                "Building": {
+                    "type": "string"
+                },
+                "Floor": {
+                    "type": "string"
+                },
+                "Room": {
+                    "type": "string"
+                },
+                "DescriptiveLocation": {
+                    "type": "string"
+                },
+                "DriveInstructions": {
+                    "type": "string"
+                },
+                "Exchange": {
+                    "type": "string"
+                },
+                "CityCrossBoundaryState": {
+                    "type": "string"
+                },
+                "AdslTrackingIndicatorId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Wing": {
+                    "type": "string"
+                },
+                "Pier": {
+                    "type": "string"
+                },
+                "Apartment": {
+                    "type": "string"
+                },
+                "Lot": {
+                    "type": "string"
+                },
+                "Slip": {
+                    "type": "string"
+                },
+                "Suit": {
+                    "type": "string"
+                },
+                "Unit": {
+                    "type": "string"
+                },
+                "UnNumberedHouse": {
+                    "type": "boolean"
+                },
+                "Lso": {
+                    "type": "string"
+                },
+                "InCityLimits": {
+                    "type": "boolean"
+                },
+                "ShortDescrip": {
+                    "type": "string"
+                },
+                "LongDescrip": {
+                    "type": "string"
+                },
+                "ValidationDate": {
+                    "type": "string"
+                },
+                "ValidationUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ValidationResult": {
+                    "type": "string"
+                },
+                "ValidationMethodId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ValidationClli": {
+                    "type": "string"
+                },
+                "ClliSource": {
+                    "type": "string"
+                },
+                "SystemClli": {
+                    "type": "string"
+                },
+                "SystemClliSource": {
+                    "type": "string"
+                },
+                "AccountCircuits": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "AccountCircuit"
+                    }
+                },
+                "AccountProducts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "AccountProduct"
+                    }
+                },
+                "Account": {
+                    "$ref": "Account"
+                },
+                "SerialNoes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "SerialNo"
+                    }
+                }
+            }
+        },
+        "AccountNote": {
+            "type": "object",
+            "properties": {
+                "AccountId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Note": {
+                    "type": "string"
+                },
+                "UpdateDate": {
+                    "type": "string"
+                },
+                "UserName": {
+                    "type": "string"
+                },
+                "UpdateTime": {
+                    "type": "string"
+                }
+            }
+        },
+        "AccountContact": {
+            "type": "object",
+            "properties": {
+                "AccountContactId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ContactId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Account": {
+                    "$ref": "Account"
+                },
+                "Contact": {
+                    "$ref": "Contact"
+                }
+            }
+        },
+        "AccountCircuit": {
+            "type": "object",
+            "properties": {
+                "AccountCircuitId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwDs0CircuitInventoryId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwAinCircuitId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "CpeInventoryId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "ActivationNumber": {
+                    "type": "string"
+                },
+                "AccountId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PhysicalAddressId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "DslLoginId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SupplierId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwPortTypeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LineOfBusinessId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "BillingGroupId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Account": {
+                    "$ref": "Account"
+                },
+                "PhysicalAddress": {
+                    "$ref": "PhysicalAddress"
+                },
+                "AccountCircuitSerialNumbers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "AccountCircuitSerialNumber"
+                    }
+                },
+                "AccountProducts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "AccountProduct"
+                    }
+                }
+            }
+        },
+        "ServiceDiscount": {
+            "type": "object",
+            "properties": {
+                "ServiceDiscountId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ServiceProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ServiceDiscountReasonId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Static": {
+                    "type": "boolean"
+                },
+                "Amount": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "StartDate": {
+                    "type": "string"
+                },
+                "EndDate": {
+                    "type": "string"
+                },
+                "StartFlag": {
+                    "type": "boolean"
+                },
+                "EndFlag": {
+                    "type": "boolean"
+                },
+                "AccountContractId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ContractId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "MarketingPromoId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ServiceDiscountEndReasonId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Comment": {
+                    "type": "string"
+                },
+                "AccountProduct": {
+                    "$ref": "AccountProduct"
+                },
+                "ServiceProduct": {
+                    "$ref": "ServiceProduct"
+                }
+            }
+        },
+        "Product": {
+            "type": "object",
+            "properties": {
+                "ProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Usoc": {
+                    "type": "string"
+                },
+                "UsocDescrip": {
+                    "type": "string"
+                },
+                "DpcGroupNo": {
+                    "type": "string"
+                },
+                "DpcItemNo": {
+                    "type": "string"
+                },
+                "CommissionPaid": {
+                    "type": "boolean"
+                },
+                "GlAcct": {
+                    "type": "string"
+                },
+                "ProductCategory": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AreaCalling": {
+                    "type": "boolean"
+                },
+                "Fcc": {
+                    "type": "boolean"
+                },
+                "TreatLikeFcc": {
+                    "type": "boolean"
+                },
+                "Regulated": {
+                    "type": "boolean"
+                },
+                "ProductStatusId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PrintIfZero": {
+                    "type": "boolean"
+                },
+                "BillAnnually": {
+                    "type": "boolean"
+                },
+                "LifeLine": {
+                    "type": "boolean"
+                },
+                "EvdoKbCap": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Factor911": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Vge": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "ProductFamilyId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ProductFamily": {
+                    "$ref": "ProductFamily"
+                },
+                "Prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "ClliProductPricing"
+                    }
+                },
+                "ServiceAttributeTypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "ServiceAttributeType"
+                    }
+                }
+            }
+        },
+        "Supplier": {
+            "type": "object",
+            "properties": {
+                "SupplierId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SupplierDesc": {
+                    "type": "string"
+                },
+                "Abbrev": {
+                    "type": "string"
+                },
+                "Active": {
+                    "type": "boolean"
+                },
+                "Resale": {
+                    "type": "boolean"
+                },
+                "Facility": {
+                    "type": "boolean"
+                },
+                "CsrSourceId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Line": {
+                    "type": "boolean"
+                },
+                "Circuit": {
+                    "type": "boolean"
+                },
+                "ServiceProducts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "ServiceProduct"
+                    }
+                }
+            }
+        },
+        "ServiceAttribute": {
+            "type": "object",
+            "properties": {
+                "ServiceAttributeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ServiceProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ServiceAttributeTypeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AttributeValue": {
+                    "type": "string"
+                },
+                "ServiceAttributeType": {
+                    "$ref": "ServiceAttributeType"
+                }
+            }
+        },
+        "SerialNo": {
+            "type": "object",
+            "properties": {
+                "SerialNoId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ServiceNo": {
+                    "type": "string"
+                },
+                "ProfitCenterId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AgentId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LineType": {
+                    "format": "int32",
+                    "enum": [
+                        1,
+                        2,
+                        3
+                    ],
+                    "type": "integer"
+                },
+                "LongDistance": {
+                    "type": "boolean"
+                },
+                "LdRateId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NewLinePaid": {
+                    "type": "string"
+                },
+                "Suspend": {
+                    "type": "boolean"
+                },
+                "SuspendDate": {
+                    "type": "string"
+                },
+                "SuspendUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Csrid": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LdIntraStateRateId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "InputUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "InputDate": {
+                    "type": "string"
+                },
+                "TfRateId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "FacMigrationStatus": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "FacUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "FacFollowupDate": {
+                    "type": "string"
+                },
+                "PhysicalAddressId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Pic": {
+                    "type": "string"
+                },
+                "Lpic": {
+                    "type": "string"
+                },
+                "PicFreeze": {
+                    "type": "string"
+                },
+                "CommissionPlanTypeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LdSupplierId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Tbe": {
+                    "type": "string"
+                },
+                "InputReasonId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LastLdTrafficDate": {
+                    "type": "string"
+                },
+                "ParentSerialNoId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LdStatusId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AlertResetCounter": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AlertResetDate": {
+                    "type": "string"
+                },
+                "AlertResetUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PriorToResetLastLdTrafficDate": {
+                    "type": "string"
+                },
+                "PicSupplierId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LpicSupplierId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "InterLataLdRate": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "InterLataLdRateOverrideDate": {
+                    "type": "string"
+                },
+                "IntraLataLdRate": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "IntraLataLdRateOverrideDate": {
+                    "type": "string"
+                },
+                "Did": {
+                    "type": "boolean"
+                },
+                "GeoCodeOverride": {
+                    "type": "string"
+                },
+                "DidRangeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ServiceNoExt": {
+                    "type": "string"
+                },
+                "InternationalLdScheduleId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "OverrideCallTypeId4To1": {
+                    "type": "boolean"
+                },
+                "LdBlocked": {
+                    "type": "boolean"
+                },
+                "TollRestricted": {
+                    "type": "boolean"
+                },
+                "LineOfBusinessId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "BillingGroupId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountCircuitSerialNumbers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "AccountCircuitSerialNumber"
+                    }
+                },
+                "ServiceProducts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "ServiceProduct"
+                    }
+                }
+            }
+        },
+        "Contact": {
+            "type": "object",
+            "properties": {
+                "ContactId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "FirstName": {
+                    "type": "string"
+                },
+                "LastName": {
+                    "type": "string"
+                },
+                "JobTitle": {
+                    "type": "string"
+                },
+                "Address1": {
+                    "type": "string"
+                },
+                "Address2": {
+                    "type": "string"
+                },
+                "Address3": {
+                    "type": "string"
+                },
+                "City": {
+                    "type": "string"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "Zipcode": {
+                    "type": "string"
+                },
+                "Mtn": {
+                    "type": "string"
+                },
+                "EmailAddress1": {
+                    "type": "string"
+                },
+                "EmailAddress2": {
+                    "type": "string"
+                },
+                "DoNotCall": {
+                    "type": "boolean"
+                },
+                "DoNotEmail": {
+                    "type": "boolean"
+                },
+                "DoNotPostalMail": {
+                    "type": "boolean"
+                },
+                "DoNotBulkEmail": {
+                    "type": "boolean"
+                },
+                "DoNotBulkPostalMail": {
+                    "type": "boolean"
+                },
+                "Telephone1": {
+                    "type": "string"
+                },
+                "Fax": {
+                    "type": "string"
+                },
+                "MobilePhone": {
+                    "type": "string"
+                },
+                "ModifiedOn": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "ModifiedUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "TypeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountContacts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "AccountContact"
+                    }
+                }
+            }
+        },
+        "AccountCircuitSerialNumber": {
+            "type": "object",
+            "properties": {
+                "AccountCircuitSerialNumberId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountCircuitId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SerialNoId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ToBeRemoved": {
+                    "type": "boolean"
+                },
+                "WorkOrderLineId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountCircuit": {
+                    "$ref": "AccountCircuit"
+                },
+                "SerialNo": {
+                    "$ref": "SerialNo"
+                }
+            }
+        },
+        "ServiceProduct": {
+            "type": "object",
+            "properties": {
+                "SerialNoId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "StartDate": {
+                    "type": "string"
+                },
+                "EndDate": {
+                    "type": "string"
+                },
+                "Qty": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "StartFlag": {
+                    "type": "boolean"
+                },
+                "EndFlag": {
+                    "type": "boolean"
+                },
+                "ServiceProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "UserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ChangeDate": {
+                    "type": "string"
+                },
+                "ChangeTime": {
+                    "type": "string"
+                },
+                "InputStartDate": {
+                    "type": "string"
+                },
+                "InputEndDate": {
+                    "type": "string"
+                },
+                "InputStartUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "InputEndUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Amount": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "AmountEndDate": {
+                    "type": "string"
+                },
+                "SupplierId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SupplierCost": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "AmountOverrideComment": {
+                    "type": "string"
+                },
+                "AmountOverrideUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AmountOverrideDate": {
+                    "type": "string"
+                },
+                "ResaleReasonId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SupplierChangeDate": {
+                    "type": "string"
+                },
+                "SupplierChangeUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PreviousSupplierId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LineActivityTypeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SoldDate": {
+                    "type": "string"
+                },
+                "SoldUserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ClliAmount": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "PackageAccountProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PackageServiceProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LastInvoicedDate": {
+                    "type": "string"
+                },
+                "ActionId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Product": {
+                    "$ref": "Product"
+                },
+                "ServiceDiscounts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "ServiceDiscount"
+                    }
+                },
+                "Supplier": {
+                    "$ref": "Supplier"
+                },
+                "ServiceAttributes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "ServiceAttribute"
+                    }
+                }
+            }
+        },
+        "ProductFamily": {
+            "type": "object",
+            "properties": {
+                "ProductFamilyId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Family": {
+                    "type": "string"
+                },
+                "Line": {
+                    "type": "boolean"
+                },
+                "TrafficTypeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ProductLevelId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ProductTypeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "Product"
+                    }
+                }
+            }
+        },
+        "ClliProductPricing": {
+            "type": "object",
+            "properties": {
+                "ClliProductPricingId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ClliUneZoneId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LineType": {
+                    "format": "int32",
+                    "enum": [
+                        1,
+                        2,
+                        3
+                    ],
+                    "type": "integer"
+                },
+                "ProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Amount": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "NumberLiveInstances": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Remove": {
+                    "type": "boolean"
+                },
+                "OverrideInstances": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Amount12": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "Amount24": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "Amount36": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "Unavailable": {
+                    "type": "boolean"
+                },
+                "PricingPlanId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ClliUneZone": {
+                    "$ref": "ClliUneZone",
+                    "readOnly": true
+                }
+            }
+        },
+        "ServiceAttributeType": {
+            "type": "object",
+            "properties": {
+                "ServiceAttributeTypeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "ProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                }
+            }
+        },
+        "ClliUneZone": {
+            "type": "object",
+            "properties": {
+                "ClliUneZoneId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Clli": {
+                    "type": "string"
+                },
+                "UneZone": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "Ilec": {
+                    "type": "string"
+                }
+            }
+        },
+        "AccountNoteParams": {
+            "type": "object",
+            "properties": {
+                "Text": {
+                    "type": "string"
+                },
+                "UserName": {
+                    "type": "string"
+                }
+            }
+        },
+        "RestoreFeeParams": {
+            "type": "object",
+            "properties": {
+                "SerialNoIds": {
+                    "type": "array",
+                    "items": {
+                        "format": "int32",
+                        "type": "integer"
+                    }
+                },
+                "Mtn": {
+                    "type": "string"
+                }
+            }
+        },
+        "OneTimeCharge": {
+            "type": "object",
+            "properties": {
+                "OneTimeChargeId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ServiceLocationId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ProfitCenterId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SerialNo": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ProductId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Invoice": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Qty": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "OneTimeDate": {
+                    "type": "string"
+                },
+                "Amount": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "SystemAdded": {
+                    "type": "boolean"
+                },
+                "UnitAmount": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "PrepaidInvoiceId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AccountCircuitId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PhysicalAddressId": {
+                    "format": "int32",
+                    "type": "integer"
+                }
+            }
+        },
+        "CompanyCode": {
+            "type": "object",
+            "properties": {
+                "StateCode": {
+                    "type": "string"
+                },
+                "ResaleCompanyCode": {
+                    "type": "string"
+                },
+                "UneCompanyCode": {
+                    "type": "string"
+                },
+                "Ilecid": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "BirchResaleCompanyCode": {
+                    "type": "string"
+                },
+                "BirchUneCompanyCode": {
+                    "type": "string"
+                },
+                "IonexResaleCompanyCode": {
+                    "type": "string"
+                },
+                "IonexUneCompanyCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "DisconnectParams": {
+            "type": "object",
+            "properties": {
+                "EndDate": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "UserId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "EntryDate": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            }
+        },
+        "UpdateCircuitIdParams": {
+            "type": "object",
+            "properties": {
+                "AccountCircuitId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "CircuitId": {
+                    "type": "string"
+                }
+            }
+        },
+        "UpdateNwAinCircuitParams": {
+            "type": "object",
+            "properties": {
+                "AccountCircuitId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwAinCircuitId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PortTypeId": {
+                    "format": "int32",
+                    "type": "integer"
+                }
+            }
+        },
+        "Void": {
+            "type": "object",
+            "properties": {}
+        },
+        "CircuitDTO": {
+            "type": "object",
+            "properties": {
+                "NwAinCircuitId": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "CircuitDescription": {
+                    "type": "string"
+                },
+                "CircuitName": {
+                    "type": "string"
+                },
+                "PlanName": {
+                    "type": "string"
+                },
+                "PortTypeDesc": {
+                    "type": "string"
+                },
+                "CableName": {
+                    "type": "string"
+                },
+                "Range": {
+                    "type": "string"
+                },
+                "TypeDesc": {
+                    "type": "string"
+                },
+                "StatusDesc": {
+                    "type": "string"
+                }
+            }
+        },
+        "Circuit": {
+            "type": "object",
+            "properties": {
+                "NwAinCircuitID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "CircuitDescription": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "TypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "StatusID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "CircuitPlanID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ParentNwAinCircuitID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LoopTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Imported": {
+                    "type": "boolean"
+                },
+                "DummyCircuit": {
+                    "type": "boolean"
+                },
+                "PortTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "DLRVersion": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "CLLIZ": {
+                    "type": "string"
+                },
+                "CircuitNotes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "CircuitNote"
+                    }
+                },
+                "ChildCircuits": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "Circuit"
+                    }
+                },
+                "ParentCircuit": {
+                    "$ref": "Circuit"
+                },
+                "CircuitPlan": {
+                    "$ref": "CircuitPlan"
+                },
+                "CircuitSegments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "CircuitSegment"
+                    }
+                }
+            }
+        },
+        "CircuitNote": {
+            "type": "object",
+            "properties": {
+                "NwAinCircuitNoteID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwAinCircuitID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Note": {
+                    "type": "string"
+                },
+                "Userid": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "DateTime": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "NwAinCircuit": {
+                    "$ref": "Circuit"
+                }
+            }
+        },
+        "CircuitPlan": {
+            "type": "object",
+            "properties": {
+                "NwPlanID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Active": {
+                    "type": "boolean"
+                },
+                "Customer": {
+                    "type": "boolean"
+                },
+                "NwPortTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwPortType": {
+                    "$ref": "PortType"
+                },
+                "PlanSegments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "CircuitPlanSegment"
+                    }
+                }
+            }
+        },
+        "CircuitSegment": {
+            "type": "object",
+            "properties": {
+                "NwAinCircuitSegmentID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwAinCircuitID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SortOrder": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "A_NwProductTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Z_NwProductTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "A_NwHardwarePortID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Z_NwHardwarePortID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "StatusID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "CircuitID": {
+                    "type": "string"
+                },
+                "BAN": {
+                    "type": "string"
+                },
+                "MRC": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "NRC": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "MAccount": {
+                    "type": "string"
+                },
+                "SupplierID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwAinCircuitSegmentContractTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "InstallTPSOrderID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "DiscoTPSOrderID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "InstallDate": {
+                    "type": "string"
+                },
+                "DiscoDate": {
+                    "type": "string"
+                },
+                "Term": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ExpiresDate": {
+                    "type": "string"
+                },
+                "BadHistory": {
+                    "type": "boolean"
+                },
+                "TrunkGroupID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "VendorContractID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PortA": {
+                    "$ref": "HardwarePort"
+                },
+                "PortZ": {
+                    "$ref": "HardwarePort"
+                },
+                "ProductTypeA": {
+                    "$ref": "ProductType"
+                },
+                "ProductTypeZ": {
+                    "$ref": "ProductType"
+                }
+            }
+        },
+        "PortType": {
+            "type": "object",
+            "properties": {
+                "Channels": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ChildNwPortTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PSRChoice": {
+                    "type": "boolean"
+                },
+                "PSRDisplay": {
+                    "type": "string"
+                },
+                "CoProjectChoice": {
+                    "type": "boolean"
+                },
+                "ID": {
+                    "format": "int32",
+                    "type": "integer",
+                    "readOnly": true
+                },
+                "Value": {
+                    "type": "string",
+                    "readOnly": true
+                }
+            }
+        },
+        "CircuitPlanSegment": {
+            "type": "object",
+            "properties": {
+                "NwPlanSegmentID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwPlanID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "SortOrder": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Active": {
+                    "type": "boolean"
+                },
+                "A_NwProductTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Z_NwProductTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ProductTypeA": {
+                    "$ref": "ProductType"
+                },
+                "ProductTypeZ": {
+                    "$ref": "ProductType"
+                }
+            }
+        },
+        "HardwarePort": {
+            "type": "object",
+            "properties": {
+                "NwHardwarePortID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwPortStatusID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PortNumber": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Bank": {
+                    "type": "string"
+                },
+                "MacAddress": {
+                    "type": "string"
+                },
+                "NwPortTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SecondaryAddress": {
+                    "type": "string"
+                },
+                "NwHardwareID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ParentNwHardwarePortID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Cfas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "CFA"
+                    }
+                },
+                "CircuitTies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "CircuitTie"
+                    }
+                },
+                "Hardware": {
+                    "$ref": "Hardware"
+                },
+                "ChildPorts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "HardwarePort"
+                    }
+                }
+            }
+        },
+        "ProductType": {
+            "type": "object",
+            "properties": {
+                "NwProductTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "TreeImageID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "HasSlotNumber": {
+                    "type": "boolean"
+                },
+                "HasSlots": {
+                    "type": "boolean"
+                },
+                "HasPorts": {
+                    "type": "boolean"
+                },
+                "HasCLLI": {
+                    "type": "boolean"
+                },
+                "HasIP": {
+                    "type": "boolean"
+                },
+                "HasPower": {
+                    "type": "boolean"
+                },
+                "Abbrev": {
+                    "type": "string"
+                }
+            }
+        },
+        "CFA": {
+            "type": "object",
+            "properties": {
+                "NwCFAID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwHardwarePortID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "CFAValue": {
+                    "type": "string"
+                },
+                "TieLocationA": {
+                    "type": "string"
+                },
+                "TieLocationZ": {
+                    "type": "string"
+                },
+                "CableName": {
+                    "type": "string"
+                },
+                "Range": {
+                    "type": "string"
+                },
+                "Frame": {
+                    "type": "string"
+                },
+                "VerticalForSwitch": {
+                    "type": "string"
+                },
+                "RelayRack": {
+                    "type": "string"
+                },
+                "FACDetail": {
+                    "type": "string"
+                },
+                "FacType": {
+                    "type": "string"
+                },
+                "SysLec": {
+                    "type": "string"
+                },
+                "LineupLec": {
+                    "type": "string"
+                },
+                "AssignmentLec": {
+                    "type": "string"
+                },
+                "CircuitLec": {
+                    "type": "string"
+                },
+                "Channel": {
+                    "format": "int32",
+                    "type": "integer"
+                }
+            }
+        },
+        "CircuitTie": {
+            "type": "object",
+            "properties": {
+                "NwCircuitTieID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwHardwarePortID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "FacType": {
+                    "type": "string"
+                },
+                "SysLec": {
+                    "type": "string"
+                },
+                "LineupLec": {
+                    "type": "string"
+                },
+                "AssignmentLec": {
+                    "type": "string"
+                },
+                "CircuitLec": {
+                    "type": "string"
+                },
+                "TieLocationA": {
+                    "type": "string"
+                },
+                "TieLocationZ": {
+                    "type": "string"
+                },
+                "Channel": {
+                    "format": "int32",
+                    "type": "integer"
+                }
+            }
+        },
+        "Hardware": {
+            "type": "object",
+            "properties": {
+                "NwHardwareID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwProductID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "SerialNumber": {
+                    "type": "string"
+                },
+                "SlotNumber": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "InstallDate": {
+                    "type": "string"
+                },
+                "DecommissionDate": {
+                    "type": "string"
+                },
+                "CLLI": {
+                    "type": "string"
+                },
+                "NwHardwareStatusID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwHardwareLocationID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ContractNumber": {
+                    "type": "string"
+                },
+                "UserName": {
+                    "type": "string"
+                },
+                "ContractExpirationDate": {
+                    "type": "string"
+                },
+                "Cost": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "RackLocation": {
+                    "type": "string"
+                },
+                "Imported": {
+                    "type": "boolean"
+                },
+                "NwColocationID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ParentNwHardwareID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ChildHardwares": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "Hardware"
+                    }
+                },
+                "HardwareNotes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "HardwareNote"
+                    }
+                },
+                "HardwarePorts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "HardwarePort"
+                    }
+                },
+                "NwIpAddressHardwares": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "IpAddressHardware"
+                    }
+                }
+            }
+        },
+        "HardwareNote": {
+            "type": "object",
+            "properties": {
+                "NwHardwareNoteID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwHardwareID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Note": {
+                    "type": "string"
+                },
+                "UserID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NoteDate": {
+                    "type": "string"
+                },
+                "NoteTime": {
+                    "type": "string"
+                }
+            }
+        },
+        "IpAddressHardware": {
+            "type": "object",
+            "properties": {
+                "NwIpAddressHardwareID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwIpAddressID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwHardwareID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PrimaryIp": {
+                    "type": "boolean"
+                },
+                "NwHardware": {
+                    "$ref": "Hardware"
+                },
+                "NwIpAddress": {
+                    "$ref": "IpAddress"
+                }
+            }
+        },
+        "IpAddress": {
+            "type": "object",
+            "properties": {
+                "NwIpAddressID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Address": {
+                    "type": "string"
+                },
+                "IntIpAddress": {
+                    "format": "int64",
+                    "type": "integer"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "NwIpAddressStatusID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "QIPImport": {
+                    "type": "boolean"
+                },
+                "VPIVCI": {
+                    "type": "string"
+                },
+                "VPI": {
+                    "type": "string"
+                },
+                "VCI": {
+                    "type": "string"
+                },
+                "PVC": {
+                    "type": "string"
+                },
+                "ExtIP": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "ColocationHoming": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "ParentColo": {
+                    "type": "string"
+                },
+                "HomingColo": {
+                    "type": "string"
+                },
+                "SortOrder": {
+                    "format": "int32",
+                    "type": "integer"
+                }
+            }
+        },
+        "Colocation": {
+            "type": "object",
+            "properties": {
+                "NwCoLocationID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "AinHub": {
+                    "type": "string"
+                },
+                "CoLocationCLLI": {
+                    "type": "string"
+                },
+                "CoLocationName": {
+                    "type": "string"
+                },
+                "LATA": {
+                    "type": "string"
+                },
+                "Address1": {
+                    "type": "string"
+                },
+                "Address2": {
+                    "type": "string"
+                },
+                "City": {
+                    "type": "string"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "Zip": {
+                    "type": "string"
+                },
+                "AinCoLocationCLLI": {
+                    "type": "string"
+                },
+                "RateCenterID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwCoLocationStatusID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "LRN": {
+                    "type": "string"
+                },
+                "MarketID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "TargetDate": {
+                    "type": "string"
+                },
+                "CompleteDate": {
+                    "type": "string"
+                },
+                "DSMAgentID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "PlanningToPlan": {
+                    "type": "boolean"
+                },
+                "LeadWireCenterNPANXX": {
+                    "type": "string"
+                },
+                "TopoVisible": {
+                    "type": "boolean"
+                },
+                "POTSACTL": {
+                    "type": "string"
+                },
+                "ComboACTL": {
+                    "type": "string"
+                },
+                "T1ACTL": {
+                    "type": "string"
+                },
+                "LoopQBAN1": {
+                    "type": "string"
+                },
+                "LPNQBAN2": {
+                    "type": "string"
+                },
+                "T1BAN": {
+                    "type": "string"
+                },
+                "SIBAN": {
+                    "type": "string"
+                },
+                "OCN": {
+                    "type": "string"
+                },
+                "DSLN": {
+                    "type": "string"
+                },
+                "ACNA": {
+                    "type": "string"
+                },
+                "InitialT1OrderPlaced": {
+                    "type": "boolean"
+                },
+                "InitialComboOrderPlaced": {
+                    "type": "boolean"
+                },
+                "NwLoopTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwNetworkID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "CommissionPlanTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "BAN": {
+                    "type": "string"
+                },
+                "PhysicalAddressID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "MAccountCity": {
+                    "type": "string"
+                },
+                "HubColoID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "NwColocationTypeID": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "Hardwares": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "Hardware"
+                    }
+                }
+            }
+        },
+        "Object": {
+            "type": "object",
+            "properties": {}
+        }
+    }
+}

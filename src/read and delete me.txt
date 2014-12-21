@@ -1,0 +1,1 @@
+add all csproj files here that are not a unit test

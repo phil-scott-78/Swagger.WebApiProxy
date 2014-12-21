@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Birch.Stencil</id>
+    <version>1.0.0</version>
+    <title>Birch.Stencil</title>
+    <description>Description</description>
+    <authors>Birch</authors>
+    <owners>Birch</owners>
+    <projectUrl>http://git.birch.com/REPLACEME_with_path_to_browse_repository_in_stash</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright 2014  Birch</copyright>
+  </metadata>
+  <files>
+    <file src="..\src\Birch.Stencil\bin\Release\Birch.Stencil.dll" target="lib\net45" />
+  </files>
+</package>
