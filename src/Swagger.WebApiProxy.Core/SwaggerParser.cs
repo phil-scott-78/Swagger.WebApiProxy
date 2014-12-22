@@ -13,28 +13,51 @@ namespace Swagger.WebApiProxy.Core
 {
     public class SwaggerParser
     {
-        readonly CSharpCodeProvider _csharpCodeProvider = new CSharpCodeProvider();
-
         public ProxyDefinition ParseSwaggerDoc(string document)
         {
             var jObject = JObject.Parse(document);
 
             var proxyDefinition = new ProxyDefinition();
-            foreach (var definitionToken in jObject["definitions"].Where(i=>i.Type == JTokenType.Property).Cast<JProperty>())
+            ParsePaths(jObject, proxyDefinition);
+            ParseDefinitions(jObject, proxyDefinition);
+
+            return proxyDefinition;
+        }
+
+        private void ParsePaths(JObject jObject, ProxyDefinition proxyDefinition)
+        {
+            foreach (var pathToken in jObject["paths"].Cast<JProperty>())
+            {
+                foreach (var operationToken in pathToken.First.Cast<JProperty>())
+                {
+                    string path = operationToken.Name;
+                    foreach (var prop in operationToken.First["parameters"])
+                    {
+                        var typeName = GetTypeName(prop);
+                        var name = prop["name"].ToString();
+                        
+                    }
+
+                }
+            }
+            
+        }
+
+        private void ParseDefinitions(JObject jObject, ProxyDefinition proxyDefinition)
+        {
+            foreach (var definitionToken in jObject["definitions"].Where(i => i.Type == JTokenType.Property).Cast<JProperty>())
             {
                 var classDefinition = new ClassDefinition(definitionToken.Name);
                 var properties = definitionToken.Value["properties"];
                 foreach (var prop in properties)
                 {
                     var typeName = GetTypeName(prop.First);
-                    var name = _csharpCodeProvider.CreateValidIdentifier(((JProperty) prop).Name);
+                    var name = ((JProperty) prop).Name;
                     classDefinition.Properties.Add(new Property(typeName, name));
                 }
 
                 proxyDefinition.ClassDefinitions.Add(classDefinition);
             }
-
-            return proxyDefinition;
         }
 
         internal string GetTypeName(JToken token)
@@ -42,7 +65,7 @@ namespace Swagger.WebApiProxy.Core
             var refType  =token["$ref"] as JValue;
             if (refType != null)
             {
-                return _csharpCodeProvider.CreateValidIdentifier(refType.Value.ToString());
+                return refType.Value.ToString();
             }
 
             var type = (JValue) token["type"];
