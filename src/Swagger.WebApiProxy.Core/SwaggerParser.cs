@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -28,19 +29,31 @@ namespace Swagger.WebApiProxy.Core
         {
             foreach (var pathToken in jObject["paths"].Cast<JProperty>())
             {
+                var path = pathToken.Name;
                 foreach (var operationToken in pathToken.First.Cast<JProperty>())
                 {
-                    string path = operationToken.Name;
-                    foreach (var prop in operationToken.First["parameters"])
+                    var method = operationToken.Name;
+
+                    var schema = operationToken.First["responses"]["200"];
+                    var returnType = GetTypeName(schema);
+
+                    var parameters = new List<Parameter>();
+                    var paramTokens = operationToken.First["parameters"];
+                    if (paramTokens != null)
                     {
-                        var typeName = GetTypeName(prop);
-                        var name = prop["name"].ToString();
-                        
+                        foreach (var prop in paramTokens)
+                        {
+                            var typeName = GetTypeName(prop);
+                            var name = prop["name"].ToString();
+                            var parameterIn = prop["in"].ToString().Equals("path") ? ParameterIn.Path : ParameterIn.Body;
+                            var isRequired = prop["required"].ToObject<bool>();
+                            parameters.Add(new Parameter(typeName, name, parameterIn, isRequired));
+                        }
                     }
 
+                    proxyDefinition.Operations.Add(new Operation(returnType, method, path, parameters));
                 }
             }
-            
         }
 
         private void ParseDefinitions(JObject jObject, ProxyDefinition proxyDefinition)
@@ -60,15 +73,29 @@ namespace Swagger.WebApiProxy.Core
             }
         }
 
+        internal string ParseRef(string input)
+        {
+            return input.StartsWith("#/definitions/") ? input.Substring("#/definitions/".Length) : input;
+        }
+
         internal string GetTypeName(JToken token)
         {
             var refType  =token["$ref"] as JValue;
             if (refType != null)
             {
-                return refType.Value.ToString();
+                return ParseRef(refType.Value.ToString());
             }
 
-            var type = (JValue) token["type"];
+            var schema = token["schema"];
+            if (schema != null)
+            {
+                return GetTypeName(schema);
+            }
+
+            var type = token["type"] as JValue;
+            if (type == null)
+                return null;
+
             if (type.Value.Equals("boolean"))
             {
                 return "bool";
