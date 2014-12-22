@@ -44,6 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ClassDefinition.cs" />
+    <Compile Include="Models\Operation.cs" />
+    <Compile Include="Models\Parameter.cs" />
+    <Compile Include="Models\ParameterIn.cs" />
     <Compile Include="Models\Property.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ProxyDefinition.cs" />

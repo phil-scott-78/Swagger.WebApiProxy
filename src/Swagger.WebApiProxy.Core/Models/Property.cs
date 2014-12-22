@@ -1,4 +1,6 @@
-﻿namespace Swagger.WebApiProxy.Core.Models
+﻿using System.Runtime.InteropServices;
+
+namespace Swagger.WebApiProxy.Core.Models
 {
     public class Property
     {
