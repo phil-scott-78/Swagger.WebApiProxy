@@ -1,17 +1,71 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CSharp;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Swagger.WebApiProxy.Core.Models;
+﻿<#@ template language="C#" debug="true" hostspecific="true" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Serialization" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ assembly name="Newtonsoft.Json.dll" #>
+<#@ import namespace="Newtonsoft.Json.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Net.Http" #>
+<#@ import namespace="System.Xml.Serialization" #>
 
-namespace Swagger.WebApiProxy.Core
-{
+<#
+	var path = Host.ResolvePath("");
+    var swaggerApiProxySettings = Settings.GetSettings(path);
+    foreach (var endPoint in swaggerApiProxySettings.EndPoints)
+    {
+        var httpClient = new HttpClient();
+        var result = httpClient.GetStringAsync(endPoint.Url).Result;
+		var parser = new SwaggerParser();
+        var proxyDefinition = parser.ParseSwaggerDoc(result);
+    }
+#>
+
+<#+
+    static class Settings
+    {
+        public static SwaggerApiProxySettings GetSettings(string path)
+        {
+            using (var settingStream = System.IO.File.OpenRead(Path.Combine(path, "SwaggerApiProxy.tt.settings.xml")))
+            {
+                var serializer = new XmlSerializer(typeof (SwaggerApiProxySettings));
+                return (SwaggerApiProxySettings) serializer.Deserialize(settingStream);
+            }
+        }
+    }
+	
+	/// <remarks/>
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+	[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+	public partial class SwaggerApiProxySettings
+	{
+		/// <remarks/>
+		[System.Xml.Serialization.XmlArrayItemAttribute("EndPoint", IsNullable = false)]
+		public SwaggerApiProxySettingsEndPoint[] EndPoints { get; set; }
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+	public partial class SwaggerApiProxySettingsEndPoint
+	{
+		/// <remarks/>
+		public string Url { get; set; }
+
+		/// <remarks/>
+		public string Namespace { get; set; }
+
+		/// <remarks/>
+		public string Suffix { get; set; }
+
+		/// <remarks/>
+		public string BaseProxyClass { get; set; }
+	}
+
+
+
     public class SwaggerParser
     {
         public ProxyDefinition ParseSwaggerDoc(string document)
@@ -64,7 +118,7 @@ namespace Swagger.WebApiProxy.Core
             }
         }
 
-        private void ParseDefinitions(JObject jObject, ProxyDefinition proxyDefinition)
+		private void ParseDefinitions(JObject jObject, ProxyDefinition proxyDefinition)
         {
             foreach (var definitionToken in jObject["definitions"].Where(i => i.Type == JTokenType.Property).Cast<JProperty>())
             {
@@ -115,7 +169,7 @@ namespace Swagger.WebApiProxy.Core
 
         internal string GetTypeName(JToken token)
         {
-            var refType = token["$ref"] as JValue;
+            var refType  =token["$ref"] as JValue;
             if (refType != null)
             {
                 return ParseRef(refType.Value.ToString());
@@ -187,32 +241,80 @@ namespace Swagger.WebApiProxy.Core
             return "";
         }
     }
-}
 
 
-/// <remarks/>
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-public partial class SwaggerApiProxySettings
-{
-    /// <remarks/>
-    [System.Xml.Serialization.XmlArrayItemAttribute("EndPoint", IsNullable = false)]
-    public SwaggerApiProxySettingsEndPoint[] EndPoints { get; set; }
-}
+    public class ClassDefinition
+    {
+        public ClassDefinition(string name)
+        {
+            Name = name;
+            Properties = new List<Property>();
+        }
 
-/// <remarks/>
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class SwaggerApiProxySettingsEndPoint
-{
-    /// <remarks/>
-    public string Url { get; set; }
+        public string Name { get; set; }
+        public List<Property>  Properties { get; set; }
+        public string Inherits { get; set; }
+    }
 
-    /// <remarks/>
-    public string Namespace { get; set; }
+	public class Operation
+    {
+        public Operation(string returnType, string method, string path, List<Parameter> parameters)
+        {
+            Path = path;
+            Method = method;
+            Parameters = parameters;
+            ReturnType = returnType;
+        }
 
-    /// <remarks/>
-    public string Suffix { get; set; }
+        public string Path { get; set; }
+        public string Method { get; set; }
+        public List<Parameter> Parameters { get; set; }
+        public string ReturnType { get; set; }
+    }
 
-    /// <remarks/>
-    public string BaseProxyClass { get; set; }
-}
+	public class Parameter
+    {
+        public string TypeName { get; set; }
+        public string Name { get; set; }
+        public ParameterIn ParameterIn { get; set; }
+        public bool IsRequired { get; set; }
+
+        public Parameter(string typeName, string name, ParameterIn parameterIn, bool isRequired)
+        {
+            TypeName = typeName;
+            Name = name;
+            ParameterIn = parameterIn;
+            IsRequired = isRequired;
+        }
+    }
+
+	public enum ParameterIn
+    {
+        Body,
+        Path
+    }
+
+	public class Property
+    {
+        public Property(string typeName, string name)
+        {
+            TypeName = typeName;
+            Name = name;
+        }
+
+        public string Name { get; set; }
+        public string TypeName { get; set; }
+    }
+
+	public class ProxyDefinition
+    {
+        public ProxyDefinition()
+        {
+            ClassDefinitions = new List<ClassDefinition>();
+            Operations = new List<Operation>();
+        }
+
+        public List<ClassDefinition> ClassDefinitions { get; set; }
+        public List<Operation> Operations { get; set; }
+    }
+#>

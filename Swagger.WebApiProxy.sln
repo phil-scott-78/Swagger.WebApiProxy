@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swagger.WebApiProxy.Core", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swagger.WebApiProxy.Tests", "tests\Swagger.WebApiProxy.Tests\Swagger.WebApiProxy.Tests.csproj", "{614AEDB3-85BB-4FA8-BB9B-4A8FC1D0253B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swagger.WebApiProxy.Template", "Swagger.WebApiProxy.Template\Swagger.WebApiProxy.Template.csproj", "{079B726F-4027-4CEC-BD7D-E38DB795DFD4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{614AEDB3-85BB-4FA8-BB9B-4A8FC1D0253B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{614AEDB3-85BB-4FA8-BB9B-4A8FC1D0253B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{614AEDB3-85BB-4FA8-BB9B-4A8FC1D0253B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{079B726F-4027-4CEC-BD7D-E38DB795DFD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{079B726F-4027-4CEC-BD7D-E38DB795DFD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{079B726F-4027-4CEC-BD7D-E38DB795DFD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{079B726F-4027-4CEC-BD7D-E38DB795DFD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

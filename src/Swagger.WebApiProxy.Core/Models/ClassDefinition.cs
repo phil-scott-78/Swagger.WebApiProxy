@@ -16,5 +16,6 @@ namespace Swagger.WebApiProxy.Core.Models
 
         public string Name { get; set; }
         public List<Property>  Properties { get; set; }
+        public string Inherits { get; set; }
     }
 }
