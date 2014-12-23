@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,37 +8,33 @@ using System.Threading.Tasks;
 public class SwaggerPetstoreWebProxy
 {
     // URL: /pets
-    // Method: get
-    public async Task<List<pet>> findPets()
+    // Method: GET
+    public async Task<List<pet>> findPets(List<string> tags, int limit)
     {
         throw new NotImplementedException();
     }
 
     // URL: /pets
-    // Method: post
-    public async Task<pet> addPet()
+    // Method: POST
+    public async Task<pet> addPet(newPet pet)
     {
         throw new NotImplementedException();
     }
 
     // URL: /pets/{id}
-    // Method: get
-    public async Task<pet> findPetById()
+    // Method: GET
+    public async Task<pet> findPetById(long id)
     {
         throw new NotImplementedException();
     }
 
     // URL: /pets/{id}
-    // Method: delete
-    public async Task deletePet()
+    // Method: DELETE
+    public async Task deletePet(long id)
     {
         throw new NotImplementedException();
     }
 
-
-
-
-    /// note
     public class pet
     {
         public long id { get; set; }
@@ -45,13 +42,11 @@ public class SwaggerPetstoreWebProxy
         public string tag { get; set; }
     }
 
-    /// note
     public class newPet : pet
     {
         public long id { get; set; }
     }
 
-    /// note
     public class errorModel
     {
         public int code { get; set; }
@@ -59,4 +54,5 @@ public class SwaggerPetstoreWebProxy
     }
 
 }
+
 

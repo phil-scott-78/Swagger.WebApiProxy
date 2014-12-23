@@ -17,17 +17,20 @@
 <#@ include file="$(SolutionDir)\Packages\T4.TemplateFileManager.2.1.2\tools\ttinc\TemplateFilemanager.CS.ttinclude" #>
 <#@ output extension=".cs" #>
 <# 
-	// Recommended editor: Tangible T4 Editor (http://t4-editor.tangible-engineering.com/Download_T4Editor_Plus_ModelingTools.html)
-	// after save SimpleSample.tt, the output will be generated in the TestFolder of the project
-	var fileProperties = new FileProperties()
-	{
-		BuildAction = BuildAction.Compile
-	};
+    // Recommended editor: Tangible T4 Editor (http://t4-editor.tangible-engineering.com/Download_T4Editor_Plus_ModelingTools.html)
+    // after save SimpleSample.tt, the output will be generated in the TestFolder of the project
+    var fileProperties = new FileProperties()
+    {
+        BuildAction = BuildAction.Compile
+    };
 
-	var fileManager = TemplateFileManager.Create(this);
+    // Build output object
+    var output = new StringBuilder();
 
-	fileManager.IsAutoIndentEnabled = true;
-	fileManager.CanOverwriteExistingFile = true;
+    var fileManager = TemplateFileManager.Create(this);
+
+    fileManager.IsAutoIndentEnabled = true;
+    fileManager.CanOverwriteExistingFile = true;
 
     var csharpCodeProvider = new CSharpCodeProvider();
     var path = Host.ResolvePath("");
@@ -40,86 +43,83 @@
         var proxyDefinition = parser.ParseSwaggerDoc(result);
         var proxyName = csharpCodeProvider.CreateValidIdentifier(proxyDefinition.Title.Replace(" ", "")) + "WebProxy";
         
-		fileManager.StartNewFile(proxyName + ".cs");
+        fileManager.StartNewFile(proxyName + ".cs");
+        
+        // using directives
+        output.AppendFormat("using System;").AppendLine();
+        output.AppendFormat("using System.Collections.Generic;").AppendLine();
+        output.AppendFormat("using System.Threading.Tasks;").AppendLine().AppendLine();
 
-		#>
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+        // class title and description
+        output.AppendFormat("// {0}", proxyDefinition.Title).AppendLine();
+        output.AppendFormat("// {0}", proxyDefinition.Description).AppendLine();
 
-// <#= proxyDefinition.Title #>
-// <#= proxyDefinition.Description #>
-public class <#= proxyName #>
-{
-        <# 
-		// async operations
+        // start class defintion
+        output.AppendFormat("public class {0}", proxyName).AppendLine();
+        output.AppendFormat("{{").AppendLine();
+
+        // Async operations (web methods)
         foreach (var operationDef in proxyDefinition.Operations) {
-        #>
-            // URL: <#= operationDef.Path #>
-            // Method: <#= operationDef.Method #>
-            public async Task<# if (!string.IsNullOrEmpty(operationDef.ReturnType)) { #><<#= operationDef.ReturnType #>><# } else { #><# } #> <#= operationDef.OperationId #>()
-            {
-                throw new NotImplementedException();
-            }
+            string returnType = string.IsNullOrEmpty(operationDef.ReturnType) ? string.Empty : string.Format("<{0}>", operationDef.ReturnType);
+            string parameters = string.Join(", ", operationDef.Parameters.Select(x => string.Format("{0} {1}", x.TypeName, x.Name)));
 
-        <# } 
-		#> 
-
-		
-		<#
-
-        // classes
-        foreach (var classDef in proxyDefinition.ClassDefinitions) {
-        #>
-            /// note
-            public class <#= classDef.Name  #> <# if (!string.IsNullOrEmpty(classDef.Inherits)) { #> : <#= classDef.Inherits  #> <# } #>
-            {
-            <#
-                foreach(var prop in classDef.Properties) {
-                #>
-                    public	<#= prop.TypeName #> <#= prop.Name #> { get; set; }
-                <#
-                }
-                #>
-            }
-
-        <#
+            output.AppendFormat("// URL: {0}", operationDef.Path).AppendLine();
+            output.AppendFormat("// Method: {0}", operationDef.Method.ToUpper()).AppendLine();
+            output.AppendFormat("public async Task{0} {1}({2})", returnType, operationDef.OperationId, parameters).AppendLine();
+            output.AppendFormat("{{").AppendLine();
+            output.AppendFormat("throw new NotImplementedException();").AppendLine();
+            output.AppendFormat("}}").AppendLine().AppendLine();
         }
-		#>
-		}
-		<#
-    }	
-	#>
 
-	<#
-	fileManager.Process(true);
-#>
+        // Model Classes
+        foreach (var classDef in proxyDefinition.ClassDefinitions) {
+            output.AppendFormat("public class {0} {1}", classDef.Name, string.IsNullOrEmpty(classDef.Inherits) ? string.Empty : string.Format(": {0}", classDef.Inherits)).AppendLine();
+            output.AppendFormat("{{").AppendLine();
+            foreach(var prop in classDef.Properties) {
+                output.AppendFormat("public {0} {1} {{ get; set; }}", prop.TypeName, prop.Name).AppendLine();
+            }
+            output.AppendFormat("}}").AppendLine().AppendLine();
+        }
 
-<#+
-    static class Settings
+        // close class def
+        output.AppendFormat("}}").AppendLine();
+    }
+    #>
+
+    <#= 
+        output
+    #>
+
+    <#
+        fileManager.Process(true);
+    #>        
+
+    // Class Feature Blocks (Must be last)
+    <#+
+     public static class Settings
     {
         public static SwaggerApiProxySettings GetSettings(string path)
         {
-            using (var settingStream = System.IO.File.OpenRead(Path.Combine(path, "SwaggerApiProxy.tt.settings.xml")))
+            using (var settingStream = File.OpenRead(Path.Combine(path, "SwaggerApiProxy.tt.settings.xml")))
             {
-                var serializer = new XmlSerializer(typeof (SwaggerApiProxySettings));
-                return (SwaggerApiProxySettings) serializer.Deserialize(settingStream);
+                var serializer = new XmlSerializer(typeof(SwaggerApiProxySettings));
+                return (SwaggerApiProxySettings)serializer.Deserialize(settingStream);
             }
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(Namespace = "", IsNullable = false)]
     public partial class SwaggerApiProxySettings
     {
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("EndPoint", IsNullable = false)]
+        [XmlArrayItem("EndPoint", IsNullable = false)]
         public SwaggerApiProxySettingsEndPoint[] EndPoints { get; set; }
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class SwaggerApiProxySettingsEndPoint
     {
         /// <remarks/>
@@ -146,12 +146,12 @@ public class <#= proxyName #>
             var proxyDefinition = new ProxyDefinition();
 
             var infoToken = jObject["info"];
-            proxyDefinition.Title =  infoToken["title"].ToString();
+            proxyDefinition.Title = infoToken["title"].ToString();
             var descriptionToken = infoToken["description"];
             proxyDefinition.Description = descriptionToken != null ? descriptionToken.ToString() : null;
-            
-			ParsePaths(jObject, proxyDefinition);
-            ParseDefinitions(jObject, proxyDefinition);
+
+            this.ParsePaths(jObject, proxyDefinition);
+            this.ParseDefinitions(jObject, proxyDefinition);
 
             return proxyDefinition;
         }
@@ -167,7 +167,7 @@ public class <#= proxyName #>
                     var operationId = operationToken.First["operationId"].ToString();
                     var descriptionToken = operationToken.First["description"];
                     string description = null;
-					if (descriptionToken != null)
+                    if (descriptionToken != null)
                     {
                         description = descriptionToken.ToString();
                     }
@@ -176,7 +176,7 @@ public class <#= proxyName #>
                     var schema = operationToken.First["responses"]["200"];
                     if (schema != null)
                     {
-                        returnType = GetTypeName(schema);
+                        returnType = this.GetTypeName(schema);
                     }
                     else
                     {
@@ -189,7 +189,7 @@ public class <#= proxyName #>
                     {
                         foreach (var prop in paramTokens)
                         {
-                            var typeName = GetTypeName(prop);
+                            var typeName = this.GetTypeName(prop);
                             var name = prop["name"].ToString();
                             var parameterIn = prop["in"].ToString().Equals("path") ? ParameterIn.Path : ParameterIn.Body;
                             var isRequired = prop["required"].ToObject<bool>();
@@ -223,7 +223,7 @@ public class <#= proxyName #>
                         {
                             foreach (var prop in properties)
                             {
-                                var typeName = GetTypeName(prop.First);
+                                var typeName = this.GetTypeName(prop.First);
                                 var name = ((JProperty)prop).Name;
                                 classDefinition.Properties.Add(new Property(typeName, name));
                             }
@@ -235,7 +235,7 @@ public class <#= proxyName #>
                     var properties = definitionToken.Value["properties"];
                     foreach (var prop in properties)
                     {
-                        var typeName = GetTypeName(prop.First);
+                        var typeName = this.GetTypeName(prop.First);
                         var name = ((JProperty)prop).Name;
                         classDefinition.Properties.Add(new Property(typeName, name));
                     }
@@ -253,16 +253,16 @@ public class <#= proxyName #>
 
         internal string GetTypeName(JToken token)
         {
-            var refType  =token["$ref"] as JValue;
+            var refType = token["$ref"] as JValue;
             if (refType != null)
             {
-                return ParseRef(refType.Value.ToString());
+                return this.ParseRef(refType.Value.ToString());
             }
 
             var schema = token["schema"];
             if (schema != null)
             {
-                return GetTypeName(schema);
+                return this.GetTypeName(schema);
             }
 
             var type = token["type"] as JValue;
@@ -319,7 +319,7 @@ public class <#= proxyName #>
             if (type.Value.Equals("array"))
             {
                 var jToken = token["items"];
-                return string.Format("List<{0}>", GetTypeName(jToken));
+                return string.Format("List<{0}>", this.GetTypeName(jToken));
             }
 
             return "";
@@ -331,12 +331,12 @@ public class <#= proxyName #>
     {
         public ClassDefinition(string name)
         {
-            Name = name;
-            Properties = new List<Property>();
+            this.Name = name;
+            this.Properties = new List<Property>();
         }
 
         public string Name { get; set; }
-        public List<Property>  Properties { get; set; }
+        public List<Property> Properties { get; set; }
         public string Inherits { get; set; }
     }
 
@@ -344,12 +344,12 @@ public class <#= proxyName #>
     {
         public Operation(string returnType, string method, string path, List<Parameter> parameters, string operationId, string description)
         {
-            Path = path;
-            Method = method;
-            Parameters = parameters;
-            OperationId = operationId;
-            Description = description;
-            ReturnType = returnType;
+            this.Path = path;
+            this.Method = method;
+            this.Parameters = parameters;
+            this.OperationId = operationId;
+            this.Description = description;
+            this.ReturnType = returnType;
         }
 
         public string Path { get; set; }
@@ -369,10 +369,10 @@ public class <#= proxyName #>
 
         public Parameter(string typeName, string name, ParameterIn parameterIn, bool isRequired)
         {
-            TypeName = typeName;
-            Name = name;
-            ParameterIn = parameterIn;
-            IsRequired = isRequired;
+            this.TypeName = typeName;
+            this.Name = name;
+            this.ParameterIn = parameterIn;
+            this.IsRequired = isRequired;
         }
     }
 
@@ -386,8 +386,8 @@ public class <#= proxyName #>
     {
         public Property(string typeName, string name)
         {
-            TypeName = typeName;
-            Name = name;
+            this.TypeName = typeName;
+            this.Name = name;
         }
 
         public string Name { get; set; }
@@ -398,8 +398,8 @@ public class <#= proxyName #>
     {
         public ProxyDefinition()
         {
-            ClassDefinitions = new List<ClassDefinition>();
-            Operations = new List<Operation>();
+            this.ClassDefinitions = new List<ClassDefinition>();
+            this.Operations = new List<Operation>();
         }
 
         public string Title { get; set; }
@@ -409,4 +409,4 @@ public class <#= proxyName #>
         public List<ClassDefinition> ClassDefinitions { get; set; }
         public List<Operation> Operations { get; set; }
     }
-#>
+    #>
