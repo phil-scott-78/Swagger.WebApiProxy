@@ -49,6 +49,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SwaggerApiProxy.tt</DependentUpon>
     </Compile>
+    <Compile Include="SwaggerPetstoreWebProxy.cs">
+      <DependentUpon>SwaggerApiProxy.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Swagger.WebApiProxy.Core\Swagger.WebApiProxy.Core.csproj">
@@ -58,6 +61,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="SimpleParameterTemplate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SimpleParameterTemplate.txt</LastGenOutput>
+    </None>
+    <None Include="SimpleSample.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SimpleSample.txt</LastGenOutput>
+    </None>
     <None Include="SwaggerApiProxy.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>SwaggerApiProxy1.cs</LastGenOutput>
@@ -67,7 +78,18 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SimpleParameterTemplate.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SimpleParameterTemplate.tt</DependentUpon>
+    </Content>
+    <Content Include="SimpleSample.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SimpleSample.tt</DependentUpon>
+    </Content>
     <Content Include="SwaggerApiProxy.tt.settings.xml" />
+    <Content Include="TestFolder\ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

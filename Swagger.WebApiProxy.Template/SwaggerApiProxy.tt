@@ -4,24 +4,95 @@
 <#@ assembly name="System.Xml" #>
 <#@ assembly name="System.Xml.Serialization" #>
 <#@ assembly name="System.Xml.Linq" #>
+<#@ assembly name="EnvDTE" #>
 <#@ assembly name="Newtonsoft.Json.dll" #>
 <#@ import namespace="Newtonsoft.Json.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Net.Http" #>
+<#@ import namespace="System.Runtime.InteropServices.ComTypes" #>
 <#@ import namespace="System.Xml.Serialization" #>
 
-<#
-	var path = Host.ResolvePath("");
+<#@ include file="$(SolutionDir)\Packages\T4.TemplateFileManager.2.1.2\tools\ttinc\TemplateFilemanager.CS.ttinclude" #>
+<#@ output extension=".cs" #>
+<# 
+	// Recommended editor: Tangible T4 Editor (http://t4-editor.tangible-engineering.com/Download_T4Editor_Plus_ModelingTools.html)
+	// after save SimpleSample.tt, the output will be generated in the TestFolder of the project
+	var fileProperties = new FileProperties()
+	{
+		BuildAction = BuildAction.Compile
+	};
+
+	var fileManager = TemplateFileManager.Create(this);
+
+	fileManager.IsAutoIndentEnabled = true;
+	fileManager.CanOverwriteExistingFile = true;
+
+    var csharpCodeProvider = new CSharpCodeProvider();
+    var path = Host.ResolvePath("");
     var swaggerApiProxySettings = Settings.GetSettings(path);
     foreach (var endPoint in swaggerApiProxySettings.EndPoints)
     {
         var httpClient = new HttpClient();
         var result = httpClient.GetStringAsync(endPoint.Url).Result;
-		var parser = new SwaggerParser();
+        var parser = new SwaggerParser();
         var proxyDefinition = parser.ParseSwaggerDoc(result);
-    }
+        var proxyName = csharpCodeProvider.CreateValidIdentifier(proxyDefinition.Title.Replace(" ", "")) + "WebProxy";
+        
+		fileManager.StartNewFile(proxyName + ".cs");
+
+		#>
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+// <#= proxyDefinition.Title #>
+// <#= proxyDefinition.Description #>
+public class <#= proxyName #>
+{
+        <# 
+		// async operations
+        foreach (var operationDef in proxyDefinition.Operations) {
+        #>
+            // URL: <#= operationDef.Path #>
+            // Method: <#= operationDef.Method #>
+            public async Task<# if (!string.IsNullOrEmpty(operationDef.ReturnType)) { #><<#= operationDef.ReturnType #>><# } else { #><# } #> <#= operationDef.OperationId #>()
+            {
+                throw new NotImplementedException();
+            }
+
+        <# } 
+		#> 
+
+		
+		<#
+
+        // classes
+        foreach (var classDef in proxyDefinition.ClassDefinitions) {
+        #>
+            /// note
+            public class <#= classDef.Name  #> <# if (!string.IsNullOrEmpty(classDef.Inherits)) { #> : <#= classDef.Inherits  #> <# } #>
+            {
+            <#
+                foreach(var prop in classDef.Properties) {
+                #>
+                    public	<#= prop.TypeName #> <#= prop.Name #> { get; set; }
+                <#
+                }
+                #>
+            }
+
+        <#
+        }
+		#>
+		}
+		<#
+    }	
+	#>
+
+	<#
+	fileManager.Process(true);
 #>
 
 <#+
@@ -36,33 +107,33 @@
             }
         }
     }
-	
-	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-	public partial class SwaggerApiProxySettings
-	{
-		/// <remarks/>
-		[System.Xml.Serialization.XmlArrayItemAttribute("EndPoint", IsNullable = false)]
-		public SwaggerApiProxySettingsEndPoint[] EndPoints { get; set; }
-	}
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    public partial class SwaggerApiProxySettings
+    {
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("EndPoint", IsNullable = false)]
+        public SwaggerApiProxySettingsEndPoint[] EndPoints { get; set; }
+    }
 
-	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class SwaggerApiProxySettingsEndPoint
-	{
-		/// <remarks/>
-		public string Url { get; set; }
+    /// <remarks/>
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public partial class SwaggerApiProxySettingsEndPoint
+    {
+        /// <remarks/>
+        public string Url { get; set; }
 
-		/// <remarks/>
-		public string Namespace { get; set; }
+        /// <remarks/>
+        public string Namespace { get; set; }
 
-		/// <remarks/>
-		public string Suffix { get; set; }
+        /// <remarks/>
+        public string Suffix { get; set; }
 
-		/// <remarks/>
-		public string BaseProxyClass { get; set; }
-	}
+        /// <remarks/>
+        public string BaseProxyClass { get; set; }
+    }
 
 
 
@@ -73,7 +144,13 @@
             var jObject = JObject.Parse(document);
 
             var proxyDefinition = new ProxyDefinition();
-            ParsePaths(jObject, proxyDefinition);
+
+            var infoToken = jObject["info"];
+            proxyDefinition.Title =  infoToken["title"].ToString();
+            var descriptionToken = infoToken["description"];
+            proxyDefinition.Description = descriptionToken != null ? descriptionToken.ToString() : null;
+            
+			ParsePaths(jObject, proxyDefinition);
             ParseDefinitions(jObject, proxyDefinition);
 
             return proxyDefinition;
@@ -87,6 +164,13 @@
                 foreach (var operationToken in pathToken.First.Cast<JProperty>())
                 {
                     var method = operationToken.Name;
+                    var operationId = operationToken.First["operationId"].ToString();
+                    var descriptionToken = operationToken.First["description"];
+                    string description = null;
+					if (descriptionToken != null)
+                    {
+                        description = descriptionToken.ToString();
+                    }
 
                     string returnType;
                     var schema = operationToken.First["responses"]["200"];
@@ -113,12 +197,12 @@
                         }
                     }
 
-                    proxyDefinition.Operations.Add(new Operation(returnType, method, path, parameters));
+                    proxyDefinition.Operations.Add(new Operation(returnType, method, path, parameters, operationId, description));
                 }
             }
         }
 
-		private void ParseDefinitions(JObject jObject, ProxyDefinition proxyDefinition)
+        private void ParseDefinitions(JObject jObject, ProxyDefinition proxyDefinition)
         {
             foreach (var definitionToken in jObject["definitions"].Where(i => i.Type == JTokenType.Property).Cast<JProperty>())
             {
@@ -256,23 +340,27 @@
         public string Inherits { get; set; }
     }
 
-	public class Operation
+    public class Operation
     {
-        public Operation(string returnType, string method, string path, List<Parameter> parameters)
+        public Operation(string returnType, string method, string path, List<Parameter> parameters, string operationId, string description)
         {
             Path = path;
             Method = method;
             Parameters = parameters;
+            OperationId = operationId;
+            Description = description;
             ReturnType = returnType;
         }
 
         public string Path { get; set; }
         public string Method { get; set; }
         public List<Parameter> Parameters { get; set; }
+        public string OperationId { get; set; }
+        public string Description { get; set; }
         public string ReturnType { get; set; }
     }
 
-	public class Parameter
+    public class Parameter
     {
         public string TypeName { get; set; }
         public string Name { get; set; }
@@ -288,13 +376,13 @@
         }
     }
 
-	public enum ParameterIn
+    public enum ParameterIn
     {
         Body,
         Path
     }
 
-	public class Property
+    public class Property
     {
         public Property(string typeName, string name)
         {
@@ -306,13 +394,17 @@
         public string TypeName { get; set; }
     }
 
-	public class ProxyDefinition
+    public class ProxyDefinition
     {
         public ProxyDefinition()
         {
             ClassDefinitions = new List<ClassDefinition>();
             Operations = new List<Operation>();
         }
+
+        public string Title { get; set; }
+        public string Version { get; set; }
+        public string Description { get; set; }
 
         public List<ClassDefinition> ClassDefinitions { get; set; }
         public List<Operation> Operations { get; set; }
