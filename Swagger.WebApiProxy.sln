@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swagger.WebApiProxy.Template", "src\Swagger.WebApiProxy.Template\Swagger.WebApiProxy.Template.csproj", "{079B726F-4027-4CEC-BD7D-E38DB795DFD4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{49847D3A-282B-403D-A232-13DBBC851F43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swagger.WebApiProxy.Demo.WebApi", "demo\Swagger.WebApiProxy.Demo.WebApi\Swagger.WebApiProxy.Demo.WebApi.csproj", "{81C98629-A2D1-4D0D-969D-2F7337835B0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swagger.WebApiProxy.Demo.Client", "demo\Swagger.WebApiProxy.Demo.Client\Swagger.WebApiProxy.Demo.Client.csproj", "{3A382895-92A2-490A-B694-8424F131F358}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{7A292A84-0C3D-4D4A-8EB6-7366928461AC}"
+	ProjectSection(SolutionItems) = preProject
+		build\Swagger.WebApiProxy.nuspec = build\Swagger.WebApiProxy.nuspec
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{079B726F-4027-4CEC-BD7D-E38DB795DFD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{079B726F-4027-4CEC-BD7D-E38DB795DFD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{079B726F-4027-4CEC-BD7D-E38DB795DFD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{079B726F-4027-4CEC-BD7D-E38DB795DFD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81C98629-A2D1-4D0D-969D-2F7337835B0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81C98629-A2D1-4D0D-969D-2F7337835B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81C98629-A2D1-4D0D-969D-2F7337835B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81C98629-A2D1-4D0D-969D-2F7337835B0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A382895-92A2-490A-B694-8424F131F358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A382895-92A2-490A-B694-8424F131F358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A382895-92A2-490A-B694-8424F131F358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A382895-92A2-490A-B694-8424F131F358}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{81C98629-A2D1-4D0D-969D-2F7337835B0B} = {49847D3A-282B-403D-A232-13DBBC851F43}
+		{3A382895-92A2-490A-B694-8424F131F358} = {49847D3A-282B-403D-A232-13DBBC851F43}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,7 @@
+﻿<# 
+// we are just bringing in the template here via an input statement
+// in a real app this would be done differently
+// must start the demo webapi project for this to generate properly
+#> 
+
+<#@ include file="../../src/Swagger.WebApiProxy.Template/SwaggerApiProxy.tt" #>

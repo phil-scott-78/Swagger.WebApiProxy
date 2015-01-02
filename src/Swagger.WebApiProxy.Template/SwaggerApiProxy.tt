@@ -1,0 +1,644 @@
+﻿<#@ template language="C#" debug="true" hostspecific="true" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Serialization" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ assembly name="EnvDTE" #>
+<#@ assembly name="Newtonsoft.Json.dll" #>
+<#@ import namespace="Newtonsoft.Json.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Net.Http" #>
+<#@ import namespace="System.Runtime.InteropServices.ComTypes" #>
+<#@ import namespace="System.Xml.Serialization" #>
+
+<#@ include file="TemplateFilemanager.CS.ttinclude" #>
+<#@ output extension=".txt" #>
+<# 
+
+    // var fileProperties = new FileProperties()
+    // {
+        // BuildAction = BuildAction.Compile
+    // };
+	var fileManager = TemplateFileManager.Create(this);
+
+    fileManager.IsAutoIndentEnabled = true;
+    fileManager.CanOverwriteExistingFile = true;
+
+    var path = Host.ResolvePath("");
+    var swaggerApiProxySettings = Settings.GetSettings(path);
+    foreach (var endPoint in swaggerApiProxySettings.EndPoints)
+    {
+        var httpClient = new HttpClient();
+        string result;
+		try
+        {
+			result = httpClient.GetStringAsync(endPoint.Url).Result;
+			var parser = new SwaggerParser();
+			var proxyDefinition = parser.ParseSwaggerDoc(result, endPoint.ParseOperationIdForProxyName);
+
+			fileManager.StartNewFile(endPoint.Id + ".cs");
+        
+			// using directives
+			PrintHeaders();
+			PrintDescription(proxyDefinition);
+
+			WriteLine("namespace {0}{{", endPoint.Namespace);
+
+
+
+			var proxies = proxyDefinition.Operations.Select(i=>i.ProxyName).Distinct();
+			foreach (var proxy in proxies)
+			{
+				// start class defintion
+				WriteLine("public class {0} : {1}", proxy + "WebProxy", endPoint.BaseProxyClass);
+				WriteLine("{");
+
+				WriteLine("public {0}{1}", proxy + "WebProxy", endPoint.ProxyConstructorSuffix);
+				WriteLine("{}");
+		
+				#>
+					// helper function for building uris. 
+					private string AppendQuery(string currentUrl, string paramName, string value)
+					{
+						if (currentUrl.Contains("?"))
+							currentUrl += string.Format("&{0}={1}", paramName, Uri.EscapeUriString(value));
+						else
+							currentUrl += string.Format("?{0}={1}", paramName, Uri.EscapeUriString(value));
+						return currentUrl;
+					}
+				<#
+
+				// Async operations (web methods)
+				foreach (var operationDef in proxyDefinition.Operations.Where(i=>i.ProxyName.Equals(proxy))) {
+					string returnType = string.IsNullOrEmpty(operationDef.ReturnType) ? string.Empty : string.Format("<{0}>", operationDef.ReturnType);
+					string parameters = string.Join(", ", operationDef.Parameters
+									.OrderBy(i=>i.IsRequired).Select(
+										x => (x.IsRequired == false) ? 
+											IsIntrinsicType(x.TypeName) ? string.Format("{0}? {1} = null", x.TypeName, x.Name) : string.Format("{0} {1} = null", x.TypeName, x.Name) 
+											:  string.Format("{0} {1}", x.TypeName, x.Name)));
+
+					WriteLine("/// <summary>");
+					WriteLine("/// {0}", operationDef.Description);
+				    WriteLine("/// </summary>");
+					foreach (var parameter in operationDef.Parameters)
+					{
+						WriteLine("/// <param name=\"{0}\">{1}</param>", parameter.Name, parameter.Description);
+					}
+					
+					WriteLine("public async Task{0} {1}({2})", returnType, FixTypeName(operationDef.OperationId), parameters);
+					WriteLine("{");
+					Write("var url = \"{0}\"", operationDef.Path);
+					foreach (var parameter in operationDef.Parameters.Where(i=>i.ParameterIn == ParameterIn.Path))
+					{
+						WriteLine("");
+						Write("\t.Replace(\"{{{0}}}\", {0}.ToString())", parameter.Name);
+					}
+					WriteLine(";");
+
+				    var queryParams = operationDef.Parameters.Where(i => i.ParameterIn == ParameterIn.Query).ToList();
+				    if (queryParams != null && queryParams.Count > 0)
+				    {
+						foreach (var parameter in queryParams)
+						{
+						    if (parameter.IsRequired == false)
+						    {
+						        WriteNullIfStatementOpening(parameter.Name, parameter.TypeName);
+						    }
+
+						    if (string.IsNullOrWhiteSpace(parameter.CollectionFormat) == false)
+						    {
+								// array
+								if (parameter.CollectionFormat.Equals("csv", StringComparison.OrdinalIgnoreCase))
+						        {
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\",\", {0}));", parameter.Name);
+						        }
+						        else if (parameter.CollectionFormat.Equals("ssv", StringComparison.OrdinalIgnoreCase))
+						        {
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\" \", {0}));", parameter.Name);
+						        }
+								else if (parameter.CollectionFormat.Equals("tsv", StringComparison.OrdinalIgnoreCase))
+						        {
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\"\t\", {0}));", parameter.Name);
+						        }
+								else if (parameter.CollectionFormat.Equals("pipes", StringComparison.OrdinalIgnoreCase))
+						        {
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\"\t\", {0}));", parameter.Name);
+						        }
+								else if (parameter.CollectionFormat.Equals("multi", StringComparison.OrdinalIgnoreCase))
+								{
+								    WriteLine("foreach(var item in {0})", parameter.Name);
+								    WriteLine("{");
+								    WriteLine("url = AppendQuery(url, \"{0}\", item.ToString());", parameter.Name);
+								    WriteLine("}");
+								}
+								else
+								{
+									Warning("unknown collection format found");
+								    WriteLine("url = AppendQuery(url, \"{0}\", {0}.ToString());", parameter.Name);
+								}
+						    }
+						    else
+						    {
+								WriteLine("url = AppendQuery(url, \"{0}\", {0}.ToString());", parameter.Name);    
+						    }
+
+						    
+							if (parameter.IsRequired == false)
+						    {
+						        WriteLine("}");
+						    }
+						}						
+				    }
+					
+
+					WriteLine("");
+					WriteLine("using (var client = BuildHttpClient())");
+					WriteLine("{");
+					switch (operationDef.Method.ToUpperInvariant())
+					{
+						case "GET": 
+							WriteLine("var response = await client.GetAsync(url).ConfigureAwait(false);");
+							break;
+
+						case "DELETE":
+							WriteLine("var response = await client.DeleteAsync(url).ConfigureAwait(false);");
+							break;
+
+						case "PUT":
+							var putBodyParam = operationDef.Parameters.FirstOrDefault(i => i.ParameterIn == ParameterIn.Body);
+							if (putBodyParam != null)
+							{
+								WriteLine("var response = await client.PostAsJsonAsync(url, {0}).ConfigureAwait(false);", putBodyParam.Name);   
+							}
+							else
+							{
+								WriteLine("var response = await client.PutAsync(url, new StringContent(string.Empty)).ConfigureAwait(false);");    
+							}
+
+							break;
+
+						case "POST":
+							var postBodyParam = operationDef.Parameters.FirstOrDefault(i => i.ParameterIn == ParameterIn.Body);
+							if (postBodyParam != null)
+							{
+								WriteLine("var response = await client.PostAsJsonAsync(url, {0}).ConfigureAwait(false);", postBodyParam.Name);   
+							}
+							else
+							{
+								WriteLine("var response = await client.PostAsync(url, new StringContent(string.Empty)).ConfigureAwait(false);");    
+							}
+						
+							break;
+
+						default:
+							break;
+					}
+					WriteLine("response.EnsureSuccessStatusCode();");
+
+					if (string.IsNullOrWhiteSpace(operationDef.ReturnType) == false)
+					{
+						WriteLine("return await response.Content.ReadAsAsync<{0}>().ConfigureAwait(false);", operationDef.ReturnType);
+					}
+
+					WriteLine("}");	 // close up the using
+					WriteLine("}");	 // close up the method
+				}
+
+				// close class def
+				WriteLine("}");
+			}
+
+			// Model Classes
+			foreach (var classDef in proxyDefinition.ClassDefinitions) {
+				WriteLine("public class {0} {1}", classDef.Name, string.IsNullOrEmpty(classDef.Inherits) ? string.Empty : string.Format(": {0}", classDef.Inherits));
+				WriteLine("{");;
+				foreach(var prop in classDef.Properties) {
+					WriteLine("public {0} {1} {{ get; set; }}", prop.TypeName, prop.Name);
+				}
+				WriteLine("}");
+			}
+
+			// close namespace def
+			WriteLine("}");
+        }
+        catch (Exception ex)
+        {
+            this.Error(ex.ToString());
+        }
+
+    }
+    fileManager.Process(true);
+    #>        
+
+    <#+
+
+    void PrintHeaders()
+    {
+        WriteLine("using System;");;
+        WriteLine("using System.Collections.Generic;");
+        WriteLine("using System.Threading.Tasks;");
+		WriteLine("using System.Net.Http;");
+		WriteLine("");
+		WriteLine("// ReSharper disable All");
+		WriteLine("");
+    }
+
+    void WriteNullIfStatementOpening(string parameterName, string typeName)
+    {
+        if (IsIntrinsicType(typeName))
+        {
+            WriteLine("if ({0}.HasValue){{", parameterName);
+        }
+        else
+        {
+            WriteLine("if ({0} != null){{", parameterName);
+        }
+    }
+
+	static bool IsIntrinsicType(string typeName)
+    {
+        switch (typeName.ToLowerInvariant())
+        {
+			case "int":
+			case "long":
+			case "byte":
+			case "DateTime":
+			case "float":
+			case "double":
+                return true;
+			default:
+                return false;
+        }
+    }
+
+    void PrintDescription(ProxyDefinition proxyDefinition)
+    {
+		WriteLine("// {0}", proxyDefinition.Title);
+        WriteLine("// {0}", proxyDefinition.Description);
+		WriteLine("// Generated at {0}", DateTime.Now);
+    }
+
+    static string FixTypeName(string input)
+    {
+	    var csharpCodeProvider = new CSharpCodeProvider();
+        var output = csharpCodeProvider.CreateValidIdentifier(input.Replace(" ", ""));
+        return char.ToUpper(output[0]) + output.Substring(1);
+    }
+
+    public static class Settings
+    {
+        public static SwaggerApiProxySettings GetSettings(string path)
+        {
+            using (var settingStream = File.OpenRead(Path.Combine(path, "SwaggerApiProxy.tt.settings.xml")))
+            {
+                var serializer = new XmlSerializer(typeof(SwaggerApiProxySettings));
+                return (SwaggerApiProxySettings)serializer.Deserialize(settingStream);
+            }
+        }
+    }
+
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(Namespace = "", IsNullable = false)]
+    public partial class SwaggerApiProxySettings
+    {
+        [XmlArrayItem("EndPoint", IsNullable = false)]
+        public SwaggerApiProxySettingsEndPoint[] EndPoints { get; set; }
+    }
+
+    [XmlType(AnonymousType = true)]
+    public partial class SwaggerApiProxySettingsEndPoint
+    {
+		public string Id { get; set; }
+        public string Url { get; set; }
+        public string Namespace { get; set; }
+        public string Suffix { get; set; }
+        public string BaseProxyClass { get; set; }
+		public string ProxyConstructorSuffix { get; set; }
+		public bool ParseOperationIdForProxyName { get; set; }
+    }
+
+    public class SwaggerParser
+    {
+        public ProxyDefinition ParseSwaggerDoc(string document, bool parseOperationIdForProxyName)
+        {
+		
+            var jObject = JObject.Parse(document);
+
+            var proxyDefinition = new ProxyDefinition();
+
+            var infoToken = jObject["info"];
+            proxyDefinition.Title = infoToken["title"].ToString();
+            var descriptionToken = infoToken["description"];
+            proxyDefinition.Description = descriptionToken != null ? descriptionToken.ToString() : null;
+
+            this.ParsePaths(jObject, proxyDefinition, parseOperationIdForProxyName);
+            this.ParseDefinitions(jObject, proxyDefinition);
+			
+            return proxyDefinition;
+        }
+
+        private void ParsePaths(JObject jObject, ProxyDefinition proxyDefinition, bool parseOperationIdForProxyName)
+        {
+            foreach (var pathToken in jObject["paths"].Cast<JProperty>())
+            {
+                var path = pathToken.Name;
+                foreach (var operationToken in pathToken.First.Cast<JProperty>())
+                {
+                    var proxyName = string.Empty;
+                    var method = operationToken.Name;
+                    var operationId = operationToken.First["operationId"].ToString();
+
+                    if (parseOperationIdForProxyName)
+                    {
+                        if (operationId.Contains("_"))
+                        {
+                            var underscoreLocation = operationId.IndexOf("_", StringComparison.OrdinalIgnoreCase);
+                            proxyName = operationId.Substring(0, underscoreLocation);
+                            operationId = operationId.Substring(underscoreLocation + 1);
+                        }
+                    }
+
+                    var descriptionToken = operationToken.First["description"];
+                    string description = null;
+                    if (descriptionToken != null)
+                    {
+                        description = descriptionToken.ToString();
+                    }
+
+                    string returnType;
+                    var schema = operationToken.First["responses"]["200"];
+                    if (schema != null)
+                    {
+                        returnType = this.GetTypeName(schema);
+                    }
+                    else
+                    {
+                        returnType = null;
+                    }
+
+                    var parameters = new List<Parameter>();
+                    var paramTokens = operationToken.First["parameters"];
+                    if (paramTokens != null)
+                    {
+                        foreach (var prop in paramTokens)
+                        {
+                            var typeName = this.GetTypeName(prop);
+                            var name = prop["name"].ToString();
+							var isRequired = prop["required"].ToObject<bool>();
+
+                            ParameterIn parameterIn;
+                            if (prop["in"].ToString().Equals("path"))
+                            {
+                                parameterIn = ParameterIn.Path;
+                            }
+							else if (prop["in"].ToString().Equals("query"))
+							{
+							     parameterIn = ParameterIn.Query;
+							}
+							else
+							{
+							    parameterIn = ParameterIn.Body;
+							}
+
+                            
+							var propDescriptionToken = prop["description"];
+                            string propDescription = string.Empty;
+                            if (propDescriptionToken != null)
+                            {
+                                propDescription = propDescriptionToken.ToString();
+                            }
+
+                            string collectionFormat = string.Empty;
+                            var collectionFormatToken = prop["collectionFormat"];
+                            if (collectionFormatToken != null)
+                            {
+                                collectionFormat = collectionFormatToken.ToString();
+                            }
+
+                            parameters.Add(new Parameter(typeName, name, parameterIn, isRequired, propDescription, collectionFormat));
+                        }
+                    }
+
+                    proxyDefinition.Operations.Add(new Operation(returnType, method, path, parameters, operationId, description, proxyName));
+                }
+            }
+        }
+
+        private void ParseDefinitions(JObject jObject, ProxyDefinition proxyDefinition)
+        {
+            foreach (var definitionToken in jObject["definitions"].Where(i => i.Type == JTokenType.Property).Cast<JProperty>())
+            {
+                var classDefinition = new ClassDefinition(definitionToken.Name);
+                var allOf = definitionToken.First["allOf"];
+                if (allOf != null)
+                {
+                    foreach (var itemToken in allOf)
+                    {
+                        var refType = itemToken["$ref"] as JValue;
+                        if (refType != null)
+                        {
+                            classDefinition.Inherits = refType.Value.ToString();
+                        }
+
+                        var properties = itemToken["properties"];
+                        if (properties != null)
+                        {
+                            foreach (var prop in properties)
+                            {
+                                var typeName = this.GetTypeName(prop.First);
+                                var name = ((JProperty)prop).Name;
+                                classDefinition.Properties.Add(new Property(typeName, name));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var properties = definitionToken.Value["properties"];
+                    foreach (var prop in properties)
+                    {
+                        var typeName = this.GetTypeName(prop.First);
+                        var name = ((JProperty)prop).Name;
+                        classDefinition.Properties.Add(new Property(typeName, name));
+                    }
+                }
+
+
+                proxyDefinition.ClassDefinitions.Add(classDefinition);
+            }
+        }
+
+        internal string ParseRef(string input)
+        {
+            return input.StartsWith("#/definitions/") ? input.Substring("#/definitions/".Length) : input;
+        }
+
+        internal string GetTypeName(JToken token)
+        {
+            var refType = token["$ref"] as JValue;
+            if (refType != null)
+            {
+                return this.ParseRef(refType.Value.ToString());
+            }
+
+            var schema = token["schema"];
+            if (schema != null)
+            {
+                return this.GetTypeName(schema);
+            }
+
+            var type = token["type"] as JValue;
+            if (type == null)
+                return null;
+
+            if (type.Value.Equals("boolean"))
+            {
+                return "bool";
+            }
+            if (type.Value.Equals("string"))
+            {
+                var format = token["format"] as JValue;
+                if (format == null)
+                    return "string";
+
+                if (format.Value.Equals("date") || format.Value.Equals("date-time"))
+                    return "DateTime";
+
+                if (format.Value.Equals("byte"))
+                    return "byte";
+
+                return "string";
+            }
+
+            if (type.Value.Equals("integer"))
+            {
+                var format = token["format"] as JValue;
+                if (format != null)
+                {
+                    if (format.Value.Equals("int32"))
+                        return "int";
+
+                    if (format.Value.Equals("int64"))
+                        return "long";
+                }
+
+                return "int";
+            }
+
+            if (type.Value.Equals("number"))
+            {
+                var format = token["format"] as JValue;
+                if (format != null)
+                {
+                    if (format.Value.Equals("float"))
+                        return "float";
+
+                    if (format.Value.Equals("double"))
+                        return "long";
+                }
+            }
+
+            if (type.Value.Equals("array"))
+            {
+                var jToken = token["items"];
+                return string.Format("List<{0}>", this.GetTypeName(jToken));
+            }
+
+            return "";
+        }
+    }
+
+
+    public class ClassDefinition
+    {
+        public ClassDefinition(string name)
+        {
+            this.Name = name;
+            this.Properties = new List<Property>();
+        }
+
+        public string Name { get; set; }
+        public List<Property> Properties { get; set; }
+        public string Inherits { get; set; }
+    }
+
+    public class Operation
+    {
+        public Operation(string returnType, string method, string path, List<Parameter> parameters, string operationId, string description, string proxyName)
+        {
+            this.Path = path;
+            this.Method = method;
+            this.Parameters = parameters;
+            this.OperationId = operationId;
+            this.Description = description;
+            this.ReturnType = returnType;
+            this.ProxyName = proxyName;
+        }
+
+		public string ProxyName { get; set; }
+        public string Path { get; set; }
+        public string Method { get; set; }
+        public List<Parameter> Parameters { get; set; }
+        public string OperationId { get; set; }
+        public string Description { get; set; }
+        public string ReturnType { get; set; }
+    }
+
+    public class Parameter
+    {
+        public string TypeName { get; set; }
+        public string Name { get; set; }
+        public ParameterIn ParameterIn { get; set; }
+        public bool IsRequired { get; set; }
+		public string Description { get; set; }
+		public string CollectionFormat { get; set; }
+
+        public Parameter(string typeName, string name, ParameterIn parameterIn, bool isRequired, string description, string collectionFormat)
+        {
+            this.TypeName = typeName;
+            this.Name = name;
+            this.ParameterIn = parameterIn;
+            this.IsRequired = isRequired;
+            this.Description = description;
+            this.CollectionFormat = collectionFormat;
+        }
+    }
+
+    public enum ParameterIn
+    {
+        Body,
+        Path,
+		Query
+    }
+
+    public class Property
+    {
+        public Property(string typeName, string name)
+        {
+            this.TypeName = typeName;
+            this.Name = name;
+        }
+
+        public string Name { get; set; }
+        public string TypeName { get; set; }
+    }
+
+    public class ProxyDefinition
+    {
+        public ProxyDefinition()
+        {
+            this.ClassDefinitions = new List<ClassDefinition>();
+            this.Operations = new List<Operation>();
+        }
+
+        public string Title { get; set; }
+        public string Version { get; set; }
+        public string Description { get; set; }
+
+        public List<ClassDefinition> ClassDefinitions { get; set; }
+        public List<Operation> Operations { get; set; }
+    }
+    #>

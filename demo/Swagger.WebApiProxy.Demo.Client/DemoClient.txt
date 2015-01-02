@@ -1,0 +1,17 @@
+﻿ 
+
+
+
+
+//-> Demo.cs
+
+//-> Petstore.cs
+
+//-> Petstore.cs
+// Generated helper templates
+// Generated items
+// Swagger.WebApiProxy\demo\Swagger.WebApiProxy.Demo.Client\Demo.cs
+// Swagger.WebApiProxy\demo\Swagger.WebApiProxy.Demo.Client\Petstore.cs
+        
+
+    
