@@ -1,12 +1,7 @@
 ﻿
 
-
-//-> Petstore.cs
-
-//-> Petstore.cs
 // Generated helper templates
 // Generated items
-// Swagger.WebApiProxy\src\Swagger.WebApiProxy.Template\Petstore.cs
         
 
     

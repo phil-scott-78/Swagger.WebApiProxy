@@ -1,13 +1,15 @@
 ﻿<SwaggerApiProxySettings>
   <EndPoints>
+    <!--  example end point
     <EndPoint>
       <Id>Petstore</Id>
-      <Url>https://raw.githubusercontent.com/swagger-api/swagger-spec/master/examples/v2.0/json/petstore-expanded.json</Url>
+      <Url>http://petstore.swagger.wordnik.com/v2/swagger.json</Url>
       <Namespace>Petstore</Namespace>
       <Suffix>WebProxy</Suffix>
       <BaseProxyClass>Swagger.WebApiProxy.Template.BaseProxy</BaseProxyClass>
       <ProxyConstructorSuffix>(Uri baseUrl) : base(baseUrl)</ProxyConstructorSuffix>
       <ParseOperationIdForProxyName>false</ParseOperationIdForProxyName>
     </EndPoint>
+    -->
   </EndPoints>
 </SwaggerApiProxySettings>

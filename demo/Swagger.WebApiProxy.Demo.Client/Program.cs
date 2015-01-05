@@ -12,18 +12,23 @@ namespace Swagger.WebApiProxy.Demo.Client
     {
         static void Main(string[] args)
         {
-            var valuesWebProxy = new ValuesWebProxy(new Uri("http://localhost:54076/"));
-            var result = valuesWebProxy.Get().Result;
-            foreach (var item in result)
-            {
-                Console.WriteLine(item);
-            }
+            PetWebProxy petstoreWebProxy = new PetWebProxy(new Uri("http://petstore.swagger.wordnik.com/v2/"));
+            var petById = petstoreWebProxy.GetPetById(1).Result;
+            Console.WriteLine(petById.name);
 
-            var s = valuesWebProxy.Get(1).Result;
-            var list = valuesWebProxy.Get(new List<int> {1, 2}).Result;
-            valuesWebProxy.Post("value3").Wait();
-            valuesWebProxy.Put(1, "new value 1").Wait();
-            valuesWebProxy.Delete(1).Wait();
+            petstoreWebProxy.UpdatePetWithForm("1", "fido", "hmmm").Wait();
+
+            var result = petstoreWebProxy.FindPetsByStatus(new List<string> {"string"}).Result;
+
+            try
+            {
+                var petByIdWithError = petstoreWebProxy.GetPetById(11).Result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            Console.ReadLine();
         }
     }
 }

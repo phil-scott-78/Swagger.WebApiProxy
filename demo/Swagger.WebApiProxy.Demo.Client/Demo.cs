@@ -7,9 +7,12 @@ using System.Net.Http;
 
 // Swagger.WebApiProxy.Demo.WebApi
 // 
-// Generated at 1/2/2015 6:25:33 PM
+// Generated at 1/4/2015 3:41:58 PM
 namespace Demo
 {
+    /// <summary>
+    /// Web Proxy for Products
+    /// </summary>
     public class ProductsWebProxy : Swagger.WebApiProxy.Demo.Client.BaseProxy
     {
         public ProductsWebProxy(Uri baseUrl)
@@ -29,7 +32,7 @@ namespace Demo
         /// </summary>
         public async Task<List<Product>> GetAllProducts()
         {
-            var url = "/api/Products";
+            var url = "api/Products";
 
             using (var client = BuildHttpClient())
             {
@@ -44,7 +47,7 @@ namespace Demo
         /// <param name="id"></param>
         public async Task<Product> GetProduct(int id)
         {
-            var url = "/api/Products/{id}"
+            var url = "api/Products/{id}"
                 .Replace("{id}", id.ToString());
 
             using (var client = BuildHttpClient())
@@ -55,6 +58,9 @@ namespace Demo
             }
         }
     }
+    /// <summary>
+    /// Web Proxy for Values
+    /// </summary>
     public class ValuesWebProxy : Swagger.WebApiProxy.Demo.Client.BaseProxy
     {
         public ValuesWebProxy(Uri baseUrl)
@@ -75,7 +81,7 @@ namespace Demo
         /// <param name="query"></param>
         public async Task<List<string>> Get(List<int> query)
         {
-            var url = "/api/values/search";
+            var url = "api/values/search";
             foreach (var item in query)
             {
                 url = AppendQuery(url, "query", item.ToString());
@@ -93,7 +99,7 @@ namespace Demo
         /// </summary>
         public async Task<List<string>> Get()
         {
-            var url = "/api/Values";
+            var url = "api/Values";
 
             using (var client = BuildHttpClient())
             {
@@ -108,7 +114,7 @@ namespace Demo
         /// <param name="value"></param>
         public async Task Post(string value)
         {
-            var url = "/api/Values";
+            var url = "api/Values";
 
             using (var client = BuildHttpClient())
             {
@@ -122,7 +128,7 @@ namespace Demo
         /// <param name="id"></param>
         public async Task<string> Get(int id)
         {
-            var url = "/api/Values/{id}"
+            var url = "api/Values/{id}"
                 .Replace("{id}", id.ToString());
 
             using (var client = BuildHttpClient())
@@ -139,7 +145,7 @@ namespace Demo
         /// <param name="value"></param>
         public async Task Put(int id, string value)
         {
-            var url = "/api/Values/{id}"
+            var url = "api/Values/{id}"
                 .Replace("{id}", id.ToString());
 
             using (var client = BuildHttpClient())
@@ -154,7 +160,7 @@ namespace Demo
         /// <param name="id"></param>
         public async Task Delete(int id)
         {
-            var url = "/api/Values/{id}"
+            var url = "api/Values/{id}"
                 .Replace("{id}", id.ToString());
 
             using (var client = BuildHttpClient())

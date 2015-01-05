@@ -12,6 +12,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Net.Http" #>
 <#@ import namespace="System.Runtime.InteropServices.ComTypes" #>
+<#@ import namespace="System.Security" #>
 <#@ import namespace="System.Xml.Serialization" #>
 
 <#@ include file="TemplateFilemanager.CS.ttinclude" #>
@@ -53,10 +54,13 @@
 			foreach (var proxy in proxies)
 			{
 				// start class defintion
-				WriteLine("public class {0} : {1}", proxy + "WebProxy", endPoint.BaseProxyClass);
+				WriteLine("/// <summary>");
+				WriteLine("/// Web Proxy for {0}", proxy);
+				WriteLine("/// </summary>");
+				WriteLine("public class {0} : {1}", FixTypeName(proxy) + "WebProxy", endPoint.BaseProxyClass);
 				WriteLine("{");
 
-				WriteLine("public {0}{1}", proxy + "WebProxy", endPoint.ProxyConstructorSuffix);
+				WriteLine("public {0}{1}", FixTypeName(proxy) + "WebProxy", endPoint.ProxyConstructorSuffix);
 				WriteLine("{}");
 		
 				#>
@@ -75,22 +79,27 @@
 				foreach (var operationDef in proxyDefinition.Operations.Where(i=>i.ProxyName.Equals(proxy))) {
 					string returnType = string.IsNullOrEmpty(operationDef.ReturnType) ? string.Empty : string.Format("<{0}>", operationDef.ReturnType);
 					string parameters = string.Join(", ", operationDef.Parameters
-									.OrderBy(i=>i.IsRequired).Select(
+									.OrderByDescending(i=>i.IsRequired).Select(
 										x => (x.IsRequired == false) ? 
 											IsIntrinsicType(x.TypeName) ? string.Format("{0}? {1} = null", x.TypeName, x.Name) : string.Format("{0} {1} = null", x.TypeName, x.Name) 
 											:  string.Format("{0} {1}", x.TypeName, x.Name)));
 
 					WriteLine("/// <summary>");
-					WriteLine("/// {0}", operationDef.Description);
+					WriteLine("/// {0}", SecurityElement.Escape(operationDef.Description));
 				    WriteLine("/// </summary>");
 					foreach (var parameter in operationDef.Parameters)
 					{
-						WriteLine("/// <param name=\"{0}\">{1}</param>", parameter.Name, parameter.Description);
+						WriteLine("/// <param name=\"{0}\">{1}</param>", parameter.Name, SecurityElement.Escape(parameter.Description));
 					}
 					
 					WriteLine("public async Task{0} {1}({2})", returnType, FixTypeName(operationDef.OperationId), parameters);
 					WriteLine("{");
-					Write("var url = \"{0}\"", operationDef.Path);
+
+				    if (operationDef.Path.StartsWith("/"))
+				        Write("var url = \"{0}\"", operationDef.Path.Substring(1));
+				    else
+				        Write("var url = \"{0}\"", operationDef.Path);
+
 					foreach (var parameter in operationDef.Parameters.Where(i=>i.ParameterIn == ParameterIn.Path))
 					{
 						WriteLine("");
@@ -173,6 +182,22 @@
 							{
 								WriteLine("var response = await client.PostAsJsonAsync(url, {0}).ConfigureAwait(false);", putBodyParam.Name);   
 							}
+							else if (operationDef.Parameters.Any(i => i.ParameterIn == ParameterIn.FormData))
+							{
+							    var formData = operationDef.Parameters.Where(i => i.ParameterIn == ParameterIn.FormData).ToList();
+							    WriteLine("var formKeyValuePairs = new List<KeyValuePair<string, string>>();");
+							    foreach (var formParam in formData)
+							    {
+							        if (formParam.IsRequired == false)
+							        {
+							            WriteNullIfStatementOpening(formParam.Name, formParam.TypeName);
+							        }
+							        WriteLine("formKeyValuePairs.Add(new KeyValuePair<string, string>(\"{0}\", {0}));", formParam.Name);
+							    }
+								
+							    WriteLine("HttpContent content = new FormUrlEncodedContent(formKeyValuePairs);");
+							    WriteLine("var response = await client.PutAsync(url, content).ConfigureAwait(false);");								
+							}
 							else
 							{
 								WriteLine("var response = await client.PutAsync(url, new StringContent(string.Empty)).ConfigureAwait(false);");    
@@ -185,6 +210,22 @@
 							if (postBodyParam != null)
 							{
 								WriteLine("var response = await client.PostAsJsonAsync(url, {0}).ConfigureAwait(false);", postBodyParam.Name);   
+							}
+							else if (operationDef.Parameters.Any(i => i.ParameterIn == ParameterIn.FormData))
+							{
+							    var formData = operationDef.Parameters.Where(i => i.ParameterIn == ParameterIn.FormData).ToList();
+							    WriteLine("var formKeyValuePairs = new List<KeyValuePair<string, string>>();");
+							    foreach (var formParam in formData)
+							    {
+							        if (formParam.IsRequired == false)
+							        {
+							            WriteNullIfStatementOpening(formParam.Name, formParam.TypeName);
+							        }
+							        WriteLine("formKeyValuePairs.Add(new KeyValuePair<string, string>(\"{0}\", {0}));", formParam.Name);
+							    }
+								
+							    WriteLine("HttpContent content = new FormUrlEncodedContent(formKeyValuePairs);");
+							    WriteLine("var response = await client.PostAsync(url, content).ConfigureAwait(false);");								
 							}
 							else
 							{
@@ -239,7 +280,7 @@
     {
         WriteLine("using System;");;
         WriteLine("using System.Collections.Generic;");
-        WriteLine("using System.Threading.Tasks;");
+		WriteLine("using System.Threading.Tasks;");
 		WriteLine("using System.Net.Http;");
 		WriteLine("");
 		WriteLine("// ReSharper disable All");
@@ -361,7 +402,18 @@
                         }
                     }
 
-                    var descriptionToken = operationToken.First["description"];
+                    if (string.IsNullOrWhiteSpace(proxyName))
+                    {
+						// didn't get the proxy name from the operation id, let's try the tags
+                        var tagToken = operationToken.First["tags"];
+                        if (tagToken != null)
+                        {
+                            var tags = tagToken.ToObject<List<string>>();
+							proxyName = tags.First();
+                        }
+                    }
+
+					var descriptionToken = operationToken.First["description"];
                     string description = null;
                     if (descriptionToken != null)
                     {
@@ -397,6 +449,10 @@
 							else if (prop["in"].ToString().Equals("query"))
 							{
 							     parameterIn = ParameterIn.Query;
+							}
+							else if (prop["in"].ToString().Equals("formData"))
+							{
+							     parameterIn = ParameterIn.FormData;
 							}
 							else
 							{
@@ -611,7 +667,8 @@
     {
         Body,
         Path,
-		Query
+		Query,
+		FormData
     }
 
     public class Property
