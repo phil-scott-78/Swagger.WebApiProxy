@@ -9,20 +9,25 @@ using Swagger.WebApiProxy.Demo.WebApi.Models;
 
 namespace Swagger.WebApiProxy.Demo.WebApi.Controllers
 {
-  
     public class ProductsController : ApiController
     {
         readonly Product[] _products = new Product[] 
-        { 
-            new Product { Id = 1, Name = "Tomato Soup", Category = "Groceries", Price = 1 }, 
-            new Product { Id = 2, Name = "Yo-yo", Category = "Toys", Price = 3.75M }, 
-            new Product { Id = 3, Name = "Hammer", Category = "Hardware", Price = 16.99M } 
+        {
+            new Product { Id = 1, Name = "Tomato Soup", Category = "Groceries", Price = 1 , Status = ProductStatus.BackOrdered, OtherStoreStatus = ProductStatus.InStock, Oops = OopsNoString.FirstValue},
+            new Product { Id = 2, Name = "Yo-yo", Category = "Toys", Price = 3.75M, Status = ProductStatus.InStock, OtherStoreStatus = ProductStatus.InStock, Oops = OopsNoString.SecondValue},
+            new Product { Id = 3, Name = "Hammer", Category = "Hardware", Price = 16.99M, Status = ProductStatus.InStock, OtherStoreStatus = ProductStatus.InStock, Oops = OopsNoString.FirstValue}
         };
 
-        
         public IEnumerable<Product> GetAllProducts()
         {
             return _products;
+        }
+
+        [ResponseType(typeof(IEnumerable<Product>))]
+        [Route("api/products/")]
+        public IHttpActionResult GetProductByStatus(ProductStatus status)
+        {
+            return Ok(_products.Where(i => i.Status == status));
         }
 
         [ResponseType(typeof(Product))]

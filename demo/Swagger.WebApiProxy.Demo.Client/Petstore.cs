@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
 
+// ReSharper disable All
 
 // Swagger Petstore
 // This is a sample server Petstore server.  You can find out more about Swagger at <a href="http://swagger.wordnik.com">http://swagger.wordnik.com</a> or on irc.freenode.net, #swagger.  For this sample, you can use the api key "special-key" to test the authorization filters
-// Generated at 1/4/2015 3:42:46 PM
+// Generated at 1/13/2015 11:26:13 AM
 namespace Petstore
 {
     /// <summary>
@@ -14,19 +15,9 @@ namespace Petstore
     /// </summary>
     public class PetWebProxy : Swagger.WebApiProxy.Demo.Client.BaseProxy
     {
-        private Action<HttpResponseMessage> _postResponseFunction = null;
-
-        public PetWebProxy PostResponse(Action<HttpResponseMessage> postResponseFunction)
-        {
-            _postResponseFunction = postResponseFunction;
-            return this;
-        }
-
         public PetWebProxy(Uri baseUrl)
             : base(baseUrl)
-        {
-        }
-
+        { }
         // helper function for building uris. 
         private string AppendQuery(string currentUrl, string paramName, string value)
         {
@@ -120,8 +111,6 @@ namespace Petstore
             using (var client = BuildHttpClient())
             {
                 var response = await client.GetAsync(url).ConfigureAwait(false);
-                if (_postResponseFunction != null)
-                    _postResponseFunction(response);
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadAsAsync<Pet>().ConfigureAwait(false);
             }
@@ -132,18 +121,22 @@ namespace Petstore
         /// <param name="petId">ID of pet that needs to be updated</param>
         /// <param name="name">Updated name of the pet</param>
         /// <param name="status">Updated status of the pet</param>
-        public async Task UpdatePetWithForm(string petId, string name, string status)
+        public async Task UpdatePetWithForm(string petId, string name = null, string status = null)
         {
             var url = "pet/{petId}"
                 .Replace("{petId}", petId.ToString());
 
             using (var client = BuildHttpClient())
             {
-                var formKeyValuePairs = new List<KeyValuePair<string, string>>
+                var formKeyValuePairs = new List<KeyValuePair<string, string>>();
+                if (name != null)
                 {
-                    new KeyValuePair<string, string>("name", name),
-                    new KeyValuePair<string, string>("status", status)
-                };
+                    formKeyValuePairs.Add(new KeyValuePair<string, string>("name", name));
+                }
+                if (status != null)
+                {
+                    formKeyValuePairs.Add(new KeyValuePair<string, string>("status", status));
+                }
                 HttpContent content = new FormUrlEncodedContent(formKeyValuePairs);
                 var response = await client.PostAsync(url, content).ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
@@ -154,7 +147,7 @@ namespace Petstore
         /// </summary>
         /// <param name="api_key"></param>
         /// <param name="petId">Pet id to delete</param>
-        public async Task DeletePet(string api_key, long petId)
+        public async Task DeletePet(long petId, string api_key = null)
         {
             var url = "pet/{petId}"
                 .Replace("{petId}", petId.ToString());
@@ -182,6 +175,19 @@ namespace Petstore
             else
                 currentUrl += string.Format("?{0}={1}", paramName, Uri.EscapeUriString(value));
             return currentUrl;
+        }
+        /// <summary>
+        /// Returns a map of status codes to quantities
+        /// </summary>
+        public async Task GetInventory()
+        {
+            var url = "store/inventory";
+
+            using (var client = BuildHttpClient())
+            {
+                var response = await client.GetAsync(url).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+            }
         }
         /// <summary>
         /// 

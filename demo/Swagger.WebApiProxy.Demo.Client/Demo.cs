@@ -7,7 +7,7 @@ using System.Net.Http;
 
 // Swagger.WebApiProxy.Demo.WebApi
 // 
-// Generated at 1/4/2015 3:41:58 PM
+// Generated at 1/13/2015 11:26:13 AM
 namespace Demo
 {
     /// <summary>
@@ -30,7 +30,23 @@ namespace Demo
         /// <summary>
         /// 
         /// </summary>
-        public async Task<List<Product>> GetAllProducts()
+        /// <param name="status"></param>
+        public async Task<List<Product>> GetProductByStatusAsync(StatusValues status)
+        {
+            var url = "api/products";
+            url = AppendQuery(url, "status", status.ToString());
+
+            using (var client = BuildHttpClient())
+            {
+                var response = await client.GetAsync(url).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsAsync<List<Product>>().ConfigureAwait(false);
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public async Task<List<Product>> GetAllProductsAsync()
         {
             var url = "api/Products";
 
@@ -45,7 +61,7 @@ namespace Demo
         /// 
         /// </summary>
         /// <param name="id"></param>
-        public async Task<Product> GetProduct(int id)
+        public async Task<Product> GetProductAsync(int id)
         {
             var url = "api/Products/{id}"
                 .Replace("{id}", id.ToString());
@@ -56,6 +72,12 @@ namespace Demo
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadAsAsync<Product>().ConfigureAwait(false);
             }
+        }
+        public enum StatusValues
+        {
+            InStock,
+            OutOfStock,
+            BackOrdered,
         }
     }
     /// <summary>
@@ -79,7 +101,7 @@ namespace Demo
         /// 
         /// </summary>
         /// <param name="query"></param>
-        public async Task<List<string>> Get(List<int> query)
+        public async Task<List<string>> GetAsync(List<int> query)
         {
             var url = "api/values/search";
             foreach (var item in query)
@@ -97,7 +119,7 @@ namespace Demo
         /// <summary>
         /// 
         /// </summary>
-        public async Task<List<string>> Get()
+        public async Task<List<string>> GetAsync()
         {
             var url = "api/Values";
 
@@ -112,7 +134,7 @@ namespace Demo
         /// 
         /// </summary>
         /// <param name="value"></param>
-        public async Task Post(string value)
+        public async Task PostAsync(string value)
         {
             var url = "api/Values";
 
@@ -126,7 +148,7 @@ namespace Demo
         /// 
         /// </summary>
         /// <param name="id"></param>
-        public async Task<string> Get(int id)
+        public async Task<string> GetAsync(int id)
         {
             var url = "api/Values/{id}"
                 .Replace("{id}", id.ToString());
@@ -143,7 +165,7 @@ namespace Demo
         /// </summary>
         /// <param name="id"></param>
         /// <param name="value"></param>
-        public async Task Put(int id, string value)
+        public async Task PutAsync(int id, string value)
         {
             var url = "api/Values/{id}"
                 .Replace("{id}", id.ToString());
@@ -158,7 +180,7 @@ namespace Demo
         /// 
         /// </summary>
         /// <param name="id"></param>
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             var url = "api/Values/{id}"
                 .Replace("{id}", id.ToString());
@@ -176,5 +198,25 @@ namespace Demo
         public string Name { get; set; }
         public string Category { get; set; }
         public long Price { get; set; }
+        public StatusValues Status { get; set; }
+        public OtherStoreStatusValues OtherStoreStatus { get; set; }
+        public OopsValues Oops { get; set; }
+        public enum StatusValues
+        {
+            InStock,
+            OutOfStock,
+            BackOrdered,
+        }
+        public enum OtherStoreStatusValues
+        {
+            InStock,
+            OutOfStock,
+            BackOrdered,
+        }
+        public enum OopsValues
+        {
+            _0,
+            _1,
+        }
     }
 }

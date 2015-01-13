@@ -33,7 +33,7 @@ namespace Swagger.WebApiProxy.Demo.WebApi
                         // additional fields by chaining methods off SingleApiVersion.
                         //
                         c.SingleApiVersion("1.0", "Swagger.WebApiProxy.Demo.WebApi");
-
+                        
                         // If your API has multiple versions, use "MultipleApiVersions" instead of "SingleApiVersion".
                         // In this case, you must provide a lambda that tells Swashbuckle which actions should be
                         // included in the docs for a given API version. Like "SingleApiVersion", each call to "Version"

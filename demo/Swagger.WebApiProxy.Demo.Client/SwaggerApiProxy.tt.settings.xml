@@ -7,7 +7,7 @@
       <Suffix>WebProxy</Suffix>
       <BaseProxyClass>Swagger.WebApiProxy.Demo.Client.BaseProxy</BaseProxyClass>
       <ProxyConstructorSuffix>(Uri baseUrl) : base(baseUrl)</ProxyConstructorSuffix>
-
+      <AppendAsyncToMethodName>false</AppendAsyncToMethodName>
       <ParseOperationIdForProxyName>false</ParseOperationIdForProxyName>
     </EndPoint>
     <EndPoint>
@@ -18,7 +18,7 @@
       <BaseProxyClass>Swagger.WebApiProxy.Demo.Client.BaseProxy</BaseProxyClass>
       <ParseOperationIdForProxyName>true</ParseOperationIdForProxyName>
       <ProxyConstructorSuffix>(Uri baseUrl) : base(baseUrl)</ProxyConstructorSuffix>
-
+      <AppendAsyncToMethodName>true</AppendAsyncToMethodName>
     </EndPoint>
   </EndPoints>
 </SwaggerApiProxySettings>

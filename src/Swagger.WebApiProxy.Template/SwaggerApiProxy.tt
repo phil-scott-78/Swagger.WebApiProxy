@@ -7,6 +7,7 @@
 <#@ assembly name="EnvDTE" #>
 <#@ assembly name="Newtonsoft.Json.dll" #>
 <#@ import namespace="Newtonsoft.Json.Linq" #>
+<#@ import namespace="Newtonsoft.Json.Schema" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
@@ -18,11 +19,6 @@
 <#@ include file="TemplateFilemanager.CS.ttinclude" #>
 <#@ output extension=".txt" #>
 <# 
-
-    // var fileProperties = new FileProperties()
-    // {
-        // BuildAction = BuildAction.Compile
-    // };
 	var fileManager = TemplateFileManager.Create(this);
 
     fileManager.IsAutoIndentEnabled = true;
@@ -34,6 +30,11 @@
     {
         var httpClient = new HttpClient();
         string result;
+        string methodNameAppend = string.Empty;
+        if (endPoint.AppendAsyncToMethodName)
+        {
+            methodNameAppend = "Async";
+        }
 		try
         {
 			result = httpClient.GetStringAsync(endPoint.Url).Result;
@@ -75,24 +76,40 @@
 					}
 				<#
 
+				List<Enum> proxyParamEnums = new List<Enum>();
+
 				// Async operations (web methods)
 				foreach (var operationDef in proxyDefinition.Operations.Where(i=>i.ProxyName.Equals(proxy))) {
 					string returnType = string.IsNullOrEmpty(operationDef.ReturnType) ? string.Empty : string.Format("<{0}>", operationDef.ReturnType);
 					string parameters = string.Join(", ", operationDef.Parameters
 									.OrderByDescending(i=>i.IsRequired).Select(
 										x => (x.IsRequired == false) ? 
-											IsIntrinsicType(x.TypeName) ? string.Format("{0}? {1} = null", x.TypeName, x.Name) : string.Format("{0} {1} = null", x.TypeName, x.Name) 
-											:  string.Format("{0} {1}", x.TypeName, x.Name)));
+											x.Type.IsNullableType ? string.Format("{0}? {1} = null", x.Type.TypeName, x.Type.Name) : string.Format("{0} {1} = null", x.Type.TypeName, x.Type.Name) 
+											:  string.Format("{0} {1}", x.Type.TypeName, x.Type.Name)));
+
+
+				    var enums = operationDef.Parameters.Where(i => i.Type.EnumValues != null);
+				    if (enums != null)
+				    {
+				        foreach (var enumParam in enums)
+				        {
+				            proxyParamEnums.Add(new Enum()
+				            {
+								Name = enumParam.Type.TypeName,
+								Values = enumParam.Type.EnumValues
+				            });
+				        }
+				    }
 
 					WriteLine("/// <summary>");
 					WriteLine("/// {0}", SecurityElement.Escape(operationDef.Description));
 				    WriteLine("/// </summary>");
 					foreach (var parameter in operationDef.Parameters)
 					{
-						WriteLine("/// <param name=\"{0}\">{1}</param>", parameter.Name, SecurityElement.Escape(parameter.Description));
+						WriteLine("/// <param name=\"{0}\">{1}</param>", parameter.Type.Name, SecurityElement.Escape(parameter.Description));
 					}
 					
-					WriteLine("public async Task{0} {1}({2})", returnType, FixTypeName(operationDef.OperationId), parameters);
+					WriteLine("public async Task{0} {1}{2} ({3})", returnType, FixTypeName(operationDef.OperationId), methodNameAppend, parameters);
 					WriteLine("{");
 
 				    if (operationDef.Path.StartsWith("/"))
@@ -103,7 +120,7 @@
 					foreach (var parameter in operationDef.Parameters.Where(i=>i.ParameterIn == ParameterIn.Path))
 					{
 						WriteLine("");
-						Write("\t.Replace(\"{{{0}}}\", {0}.ToString())", parameter.Name);
+						Write("\t.Replace(\"{{{0}}}\", {0}.ToString())", parameter.Type.Name);
 					}
 					WriteLine(";");
 
@@ -112,9 +129,9 @@
 				    {
 						foreach (var parameter in queryParams)
 						{
-						    if (parameter.IsRequired == false)
+							if (parameter.IsRequired == false)
 						    {
-						        WriteNullIfStatementOpening(parameter.Name, parameter.TypeName);
+						        WriteNullIfStatementOpening(parameter.Type.Name, parameter.Type.TypeName);
 						    }
 
 						    if (string.IsNullOrWhiteSpace(parameter.CollectionFormat) == false)
@@ -122,36 +139,36 @@
 								// array
 								if (parameter.CollectionFormat.Equals("csv", StringComparison.OrdinalIgnoreCase))
 						        {
-						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\",\", {0}));", parameter.Name);
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\",\", {0}));", parameter.Type.Name);
 						        }
 						        else if (parameter.CollectionFormat.Equals("ssv", StringComparison.OrdinalIgnoreCase))
 						        {
-						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\" \", {0}));", parameter.Name);
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\" \", {0}));", parameter.Type.Name);
 						        }
 								else if (parameter.CollectionFormat.Equals("tsv", StringComparison.OrdinalIgnoreCase))
 						        {
-						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\"\t\", {0}));", parameter.Name);
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\"\t\", {0}));", parameter.Type.Name);
 						        }
 								else if (parameter.CollectionFormat.Equals("pipes", StringComparison.OrdinalIgnoreCase))
 						        {
-						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\"\t\", {0}));", parameter.Name);
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\"\t\", {0}));", parameter.Type.Name);
 						        }
 								else if (parameter.CollectionFormat.Equals("multi", StringComparison.OrdinalIgnoreCase))
 								{
-								    WriteLine("foreach(var item in {0})", parameter.Name);
+								    WriteLine("foreach(var item in {0})", parameter.Type.Name);
 								    WriteLine("{");
-								    WriteLine("url = AppendQuery(url, \"{0}\", item.ToString());", parameter.Name);
+								    WriteLine("url = AppendQuery(url, \"{0}\", item.ToString());", parameter.Type.Name);
 								    WriteLine("}");
 								}
 								else
 								{
 									Warning("unknown collection format found");
-								    WriteLine("url = AppendQuery(url, \"{0}\", {0}.ToString());", parameter.Name);
+								    WriteLine("url = AppendQuery(url, \"{0}\", {0}.ToString());", parameter.Type.Name);
 								}
 						    }
 						    else
 						    {
-								WriteLine("url = AppendQuery(url, \"{0}\", {0}.ToString());", parameter.Name);    
+								WriteLine("url = AppendQuery(url, \"{0}\", {0}.ToString());", parameter.Type.Name);    
 						    }
 
 						    
@@ -180,7 +197,7 @@
 							var putBodyParam = operationDef.Parameters.FirstOrDefault(i => i.ParameterIn == ParameterIn.Body);
 							if (putBodyParam != null)
 							{
-								WriteLine("var response = await client.PostAsJsonAsync(url, {0}).ConfigureAwait(false);", putBodyParam.Name);   
+								WriteLine("var response = await client.PostAsJsonAsync(url, {0}).ConfigureAwait(false);", putBodyParam.Type.Name);   
 							}
 							else if (operationDef.Parameters.Any(i => i.ParameterIn == ParameterIn.FormData))
 							{
@@ -190,9 +207,13 @@
 							    {
 							        if (formParam.IsRequired == false)
 							        {
-							            WriteNullIfStatementOpening(formParam.Name, formParam.TypeName);
+							            WriteNullIfStatementOpening(formParam.Type.Name, formParam.Type.TypeName);
 							        }
-							        WriteLine("formKeyValuePairs.Add(new KeyValuePair<string, string>(\"{0}\", {0}));", formParam.Name);
+							        WriteLine("formKeyValuePairs.Add(new KeyValuePair<string, string>(\"{0}\", {0}));", formParam.Type.Name);
+									if (formParam.IsRequired == false)
+							        {
+							            WriteLine("}");
+							        }
 							    }
 								
 							    WriteLine("HttpContent content = new FormUrlEncodedContent(formKeyValuePairs);");
@@ -209,7 +230,7 @@
 							var postBodyParam = operationDef.Parameters.FirstOrDefault(i => i.ParameterIn == ParameterIn.Body);
 							if (postBodyParam != null)
 							{
-								WriteLine("var response = await client.PostAsJsonAsync(url, {0}).ConfigureAwait(false);", postBodyParam.Name);   
+								WriteLine("var response = await client.PostAsJsonAsync(url, {0}).ConfigureAwait(false);", postBodyParam.Type.Name);   
 							}
 							else if (operationDef.Parameters.Any(i => i.ParameterIn == ParameterIn.FormData))
 							{
@@ -219,9 +240,13 @@
 							    {
 							        if (formParam.IsRequired == false)
 							        {
-							            WriteNullIfStatementOpening(formParam.Name, formParam.TypeName);
+							            WriteNullIfStatementOpening(formParam.Type.Name, formParam.Type.TypeName);
 							        }
-							        WriteLine("formKeyValuePairs.Add(new KeyValuePair<string, string>(\"{0}\", {0}));", formParam.Name);
+							        WriteLine("formKeyValuePairs.Add(new KeyValuePair<string, string>(\"{0}\", {0}));", formParam.Type.Name);
+									if (formParam.IsRequired == false)
+							        {
+							            WriteLine("}");
+							        }
 							    }
 								
 							    WriteLine("HttpContent content = new FormUrlEncodedContent(formKeyValuePairs);");
@@ -248,19 +273,59 @@
 					WriteLine("}");	 // close up the method
 				}
 
+				
+				foreach (var proxyParamEnum in proxyParamEnums)
+			    {
+					var csharpCodeProvider = new CSharpCodeProvider();
+			        WriteLine("public enum {0}", FixTypeName(proxyParamEnum.Name));
+					WriteLine("{");
+			        foreach (var value in proxyParamEnum.Values)
+			        {
+			            WriteLine("{0},", FixTypeName(value));
+			        }
+					WriteLine("}");
+			    }
+
 				// close class def
 				WriteLine("}");
 			}
 
 			// Model Classes
-			foreach (var classDef in proxyDefinition.ClassDefinitions) {
+			foreach (var classDef in proxyDefinition.ClassDefinitions) 
+			{			
+				List<Enum> modelEnums = new List<Enum>();
+
+				
 				WriteLine("public class {0} {1}", classDef.Name, string.IsNullOrEmpty(classDef.Inherits) ? string.Empty : string.Format(": {0}", classDef.Inherits));
 				WriteLine("{");;
 				foreach(var prop in classDef.Properties) {
 					WriteLine("public {0} {1} {{ get; set; }}", prop.TypeName, prop.Name);
+				    if (prop.EnumValues != null)
+				    {
+				        modelEnums.Add(new Enum()
+				        {
+				            Name = prop.TypeName,
+							Values = prop.EnumValues
+				        });
+				    }
 				}
+
+				foreach (var modelEnum in modelEnums)
+			    {
+					var csharpCodeProvider = new CSharpCodeProvider();
+			        WriteLine("public enum {0}", csharpCodeProvider.CreateValidIdentifier(modelEnum.Name));
+					WriteLine("{");
+			        foreach (var value in modelEnum.Values)
+			        {
+			            WriteLine("{0},", FixTypeName(value));
+			        }
+					WriteLine("}");
+			    }
+
 				WriteLine("}");
 			}
+
+
 
 			// close namespace def
 			WriteLine("}");
@@ -326,6 +391,8 @@
     {
 	    var csharpCodeProvider = new CSharpCodeProvider();
         var output = csharpCodeProvider.CreateValidIdentifier(input.Replace(" ", ""));
+        if (char.IsLetter(output[0]) == false)
+            output = "_" + output;
         return char.ToUpper(output[0]) + output.Substring(1);
     }
 
@@ -359,14 +426,20 @@
         public string BaseProxyClass { get; set; }
 		public string ProxyConstructorSuffix { get; set; }
 		public bool ParseOperationIdForProxyName { get; set; }
+		public bool AppendAsyncToMethodName { get; set; }
+    }
+
+    private class Enum
+    {
+		public string Name { get; set; }
+		public string[] Values { get; set; }
     }
 
     public class SwaggerParser
     {
         public ProxyDefinition ParseSwaggerDoc(string document, bool parseOperationIdForProxyName)
         {
-		
-            var jObject = JObject.Parse(document);
+			var jObject = JObject.Parse(document);
 
             var proxyDefinition = new ProxyDefinition();
 
@@ -424,7 +497,8 @@
                     var schema = operationToken.First["responses"]["200"];
                     if (schema != null)
                     {
-                        returnType = this.GetTypeName(schema);
+                        bool dummyNullable;
+                        returnType = this.GetTypeName(schema, out dummyNullable);
                     }
                     else
                     {
@@ -437,8 +511,8 @@
                     {
                         foreach (var prop in paramTokens)
                         {
-                            var typeName = this.GetTypeName(prop);
-                            var name = prop["name"].ToString();
+                            var type = ParseType(prop);
+
 							var isRequired = prop["required"].ToObject<bool>();
 
                             ParameterIn parameterIn;
@@ -474,7 +548,7 @@
                                 collectionFormat = collectionFormatToken.ToString();
                             }
 
-                            parameters.Add(new Parameter(typeName, name, parameterIn, isRequired, propDescription, collectionFormat));
+                            parameters.Add(new Parameter(type, parameterIn, isRequired, propDescription, collectionFormat));
                         }
                     }
 
@@ -504,9 +578,8 @@
                         {
                             foreach (var prop in properties)
                             {
-                                var typeName = this.GetTypeName(prop.First);
-                                var name = ((JProperty)prop).Name;
-                                classDefinition.Properties.Add(new Property(typeName, name));
+                                var type = ParseType(prop);
+                                classDefinition.Properties.Add(type);
                             }
                         }
                     }
@@ -516,9 +589,8 @@
                     var properties = definitionToken.Value["properties"];
                     foreach (var prop in properties)
                     {
-                        var typeName = this.GetTypeName(prop.First);
-                        var name = ((JProperty)prop).Name;
-                        classDefinition.Properties.Add(new Property(typeName, name));
+                        var type = ParseType(prop);
+                        classDefinition.Properties.Add(type);
                     }
                 }
 
@@ -527,50 +599,101 @@
             }
         }
 
+        internal TypeDefinition ParseType(JToken token)
+        {
+            bool isNullable;
+			JToken workingToken;
+            string name;
+			if (token.First is JProperty)
+			{
+			    workingToken = token;
+				name = workingToken["name"].ToString();
+			}
+            else
+			{
+			    workingToken = token.First;
+				name = ((JProperty)token).Name;
+			}
+
+			var typeName = GetTypeName(workingToken, out isNullable);
+			var enumToken = workingToken["enum"];
+            string[] enumValues = null;
+            if (enumToken != null)
+            {
+                List<string> enumList = new List<string>();
+                foreach (var enumValueToken in enumToken)
+                {
+                    enumList.Add(enumValueToken.ToString());
+                }
+                enumValues = enumList.ToArray();
+                typeName = FixTypeName(name + "Values");
+            }
+			
+			TypeDefinition type = new TypeDefinition(typeName, name, enumValues, isNullable);
+            return type;
+        }
+
         internal string ParseRef(string input)
         {
             return input.StartsWith("#/definitions/") ? input.Substring("#/definitions/".Length) : input;
         }
 
-        internal string GetTypeName(JToken token)
+        internal string GetTypeName(JToken token, out bool isNullable)
         {
             var refType = token["$ref"] as JValue;
             if (refType != null)
             {
+                isNullable = false;
                 return this.ParseRef(refType.Value.ToString());
             }
 
             var schema = token["schema"];
             if (schema != null)
             {
-                return this.GetTypeName(schema);
+                return this.GetTypeName(schema, out isNullable);
             }
 
             var type = token["type"] as JValue;
             if (type == null)
+            {
+                isNullable = false;
                 return null;
+            }
 
             if (type.Value.Equals("boolean"))
             {
+                isNullable = true;
                 return "bool";
             }
             if (type.Value.Equals("string"))
             {
                 var format = token["format"] as JValue;
                 if (format == null)
+                {
+                    isNullable = false;
                     return "string";
+                }
+
 
                 if (format.Value.Equals("date") || format.Value.Equals("date-time"))
+                {
+                    isNullable = true;
                     return "DateTime";
+                }
 
                 if (format.Value.Equals("byte"))
+                {
+                    isNullable = true;
                     return "byte";
+                }
 
+                isNullable = false;
                 return "string";
             }
 
             if (type.Value.Equals("integer"))
             {
+                isNullable = true;
                 var format = token["format"] as JValue;
                 if (format != null)
                 {
@@ -586,6 +709,7 @@
 
             if (type.Value.Equals("number"))
             {
+                isNullable = true;
                 var format = token["format"] as JValue;
                 if (format != null)
                 {
@@ -599,10 +723,13 @@
 
             if (type.Value.Equals("array"))
             {
+				isNullable = false;
                 var jToken = token["items"];
-                return string.Format("List<{0}>", this.GetTypeName(jToken));
+                bool throwawayNullable; // we don't care what the underlying 
+                return string.Format("List<{0}>", this.GetTypeName(jToken, out throwawayNullable));
             }
 
+            isNullable = false;
             return "";
         }
     }
@@ -613,11 +740,11 @@
         public ClassDefinition(string name)
         {
             this.Name = name;
-            this.Properties = new List<Property>();
+            this.Properties = new List<TypeDefinition>();
         }
 
         public string Name { get; set; }
-        public List<Property> Properties { get; set; }
+        public List<TypeDefinition> Properties { get; set; }
         public string Inherits { get; set; }
     }
 
@@ -645,17 +772,15 @@
 
     public class Parameter
     {
-        public string TypeName { get; set; }
-        public string Name { get; set; }
+        public TypeDefinition Type { get; set; }
         public ParameterIn ParameterIn { get; set; }
         public bool IsRequired { get; set; }
 		public string Description { get; set; }
 		public string CollectionFormat { get; set; }
 
-        public Parameter(string typeName, string name, ParameterIn parameterIn, bool isRequired, string description, string collectionFormat)
+        public Parameter(TypeDefinition type, ParameterIn parameterIn, bool isRequired, string description, string collectionFormat)
         {
-            this.TypeName = typeName;
-            this.Name = name;
+            this.Type = type;            
             this.ParameterIn = parameterIn;
             this.IsRequired = isRequired;
             this.Description = description;
@@ -671,16 +796,20 @@
 		FormData
     }
 
-    public class Property
+    public class TypeDefinition
     {
-        public Property(string typeName, string name)
+        public TypeDefinition(string typeName, string name, string[] enumValues = null, bool isNullableType = false)
         {
             this.TypeName = typeName;
             this.Name = name;
+            this.EnumValues = enumValues;
+            this.IsNullableType = isNullableType;
         }
 
         public string Name { get; set; }
         public string TypeName { get; set; }
+		public string[] EnumValues { get; set; }
+		public bool IsNullableType { get; set; }
     }
 
     public class ProxyDefinition
