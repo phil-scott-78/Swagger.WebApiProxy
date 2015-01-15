@@ -7,15 +7,15 @@ using System.Net.Http;
 
 // Swagger Petstore
 // This is a sample server Petstore server.  You can find out more about Swagger at <a href="http://swagger.wordnik.com">http://swagger.wordnik.com</a> or on irc.freenode.net, #swagger.  For this sample, you can use the api key "special-key" to test the authorization filters
-// Generated at 1/13/2015 11:26:13 AM
+// Generated at 1/15/2015 2:55:32 PM
 namespace Petstore
 {
     /// <summary>
     /// Web Proxy for pet
     /// </summary>
-    public class PetWebProxy : Swagger.WebApiProxy.Demo.Client.BaseProxy
+    public class petWebProxy : Swagger.WebApiProxy.Demo.Client.BaseProxy
     {
-        public PetWebProxy(Uri baseUrl)
+        public petWebProxy(Uri baseUrl)
             : base(baseUrl)
         { }
         // helper function for building uris. 
@@ -31,7 +31,7 @@ namespace Petstore
         /// 
         /// </summary>
         /// <param name="body">Pet object that needs to be added to the store</param>
-        public async Task AddPet(Pet body = null)
+        public async Task addPet(Pet body = null)
         {
             var url = "pet";
 
@@ -45,7 +45,7 @@ namespace Petstore
         /// 
         /// </summary>
         /// <param name="body">Pet object that needs to be added to the store</param>
-        public async Task UpdatePet(Pet body = null)
+        public async Task updatePet(Pet body = null)
         {
             var url = "pet";
 
@@ -59,7 +59,7 @@ namespace Petstore
         /// Multiple status values can be provided with comma seperated strings
         /// </summary>
         /// <param name="status">Status values that need to be considered for filter</param>
-        public async Task<List<Pet>> FindPetsByStatus(List<string> status = null)
+        public async Task<List<Pet>> findPetsByStatus(List<string> status = null)
         {
             var url = "pet/findByStatus";
             if (status != null)
@@ -81,7 +81,7 @@ namespace Petstore
         /// Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.
         /// </summary>
         /// <param name="tags">Tags to filter by</param>
-        public async Task<List<Pet>> FindPetsByTags(List<string> tags = null)
+        public async Task<List<Pet>> findPetsByTags(List<string> tags = null)
         {
             var url = "pet/findByTags";
             if (tags != null)
@@ -103,7 +103,7 @@ namespace Petstore
         /// Returns a pet when ID &lt; 10.  ID &gt; 10 or nonintegers will simulate API error conditions
         /// </summary>
         /// <param name="petId">ID of pet that needs to be fetched</param>
-        public async Task<Pet> GetPetById(long petId)
+        public async Task<Pet> getPetById(long petId)
         {
             var url = "pet/{petId}"
                 .Replace("{petId}", petId.ToString());
@@ -121,7 +121,7 @@ namespace Petstore
         /// <param name="petId">ID of pet that needs to be updated</param>
         /// <param name="name">Updated name of the pet</param>
         /// <param name="status">Updated status of the pet</param>
-        public async Task UpdatePetWithForm(string petId, string name = null, string status = null)
+        public async Task updatePetWithForm(string petId, string name = null, string status = null)
         {
             var url = "pet/{petId}"
                 .Replace("{petId}", petId.ToString());
@@ -147,7 +147,7 @@ namespace Petstore
         /// </summary>
         /// <param name="api_key"></param>
         /// <param name="petId">Pet id to delete</param>
-        public async Task DeletePet(long petId, string api_key = null)
+        public async Task deletePet(long petId, string api_key = null)
         {
             var url = "pet/{petId}"
                 .Replace("{petId}", petId.ToString());
@@ -162,9 +162,9 @@ namespace Petstore
     /// <summary>
     /// Web Proxy for store
     /// </summary>
-    public class StoreWebProxy : Swagger.WebApiProxy.Demo.Client.BaseProxy
+    public class storeWebProxy : Swagger.WebApiProxy.Demo.Client.BaseProxy
     {
-        public StoreWebProxy(Uri baseUrl)
+        public storeWebProxy(Uri baseUrl)
             : base(baseUrl)
         { }
         // helper function for building uris. 
@@ -179,7 +179,7 @@ namespace Petstore
         /// <summary>
         /// Returns a map of status codes to quantities
         /// </summary>
-        public async Task GetInventory()
+        public async Task getInventory()
         {
             var url = "store/inventory";
 
@@ -193,7 +193,7 @@ namespace Petstore
         /// 
         /// </summary>
         /// <param name="body">order placed for purchasing the pet</param>
-        public async Task<Order> PlaceOrder(Order body = null)
+        public async Task<Order> placeOrder(Order body = null)
         {
             var url = "store/order";
 
@@ -208,7 +208,7 @@ namespace Petstore
         /// For valid response try integer IDs with value &lt;= 5 or &gt; 10. Other values will generated exceptions
         /// </summary>
         /// <param name="orderId">ID of pet that needs to be fetched</param>
-        public async Task<Order> GetOrderById(string orderId)
+        public async Task<Order> getOrderById(string orderId)
         {
             var url = "store/order/{orderId}"
                 .Replace("{orderId}", orderId.ToString());
@@ -224,7 +224,7 @@ namespace Petstore
         /// For valid response try integer IDs with value &lt; 1000. Anything above 1000 or nonintegers will generate API errors
         /// </summary>
         /// <param name="orderId">ID of the order that needs to be deleted</param>
-        public async Task DeleteOrder(string orderId)
+        public async Task deleteOrder(string orderId)
         {
             var url = "store/order/{orderId}"
                 .Replace("{orderId}", orderId.ToString());
@@ -239,9 +239,9 @@ namespace Petstore
     /// <summary>
     /// Web Proxy for user
     /// </summary>
-    public class UserWebProxy : Swagger.WebApiProxy.Demo.Client.BaseProxy
+    public class userWebProxy : Swagger.WebApiProxy.Demo.Client.BaseProxy
     {
-        public UserWebProxy(Uri baseUrl)
+        public userWebProxy(Uri baseUrl)
             : base(baseUrl)
         { }
         // helper function for building uris. 
@@ -257,7 +257,7 @@ namespace Petstore
         /// This can only be done by the logged in user.
         /// </summary>
         /// <param name="body">Created user object</param>
-        public async Task CreateUser(User body = null)
+        public async Task createUser(User body = null)
         {
             var url = "user";
 
@@ -271,7 +271,7 @@ namespace Petstore
         /// 
         /// </summary>
         /// <param name="body">List of user object</param>
-        public async Task CreateUsersWithArrayInput(List<User> body = null)
+        public async Task createUsersWithArrayInput(List<User> body = null)
         {
             var url = "user/createWithArray";
 
@@ -285,7 +285,7 @@ namespace Petstore
         /// 
         /// </summary>
         /// <param name="body">List of user object</param>
-        public async Task CreateUsersWithListInput(List<User> body = null)
+        public async Task createUsersWithListInput(List<User> body = null)
         {
             var url = "user/createWithList";
 
@@ -300,7 +300,7 @@ namespace Petstore
         /// </summary>
         /// <param name="username">The user name for login</param>
         /// <param name="password">The password for login in clear text</param>
-        public async Task<string> LoginUser(string username = null, string password = null)
+        public async Task<string> loginUser(string username = null, string password = null)
         {
             var url = "user/login";
             if (username != null)
@@ -322,7 +322,7 @@ namespace Petstore
         /// <summary>
         /// 
         /// </summary>
-        public async Task LogoutUser()
+        public async Task logoutUser()
         {
             var url = "user/logout";
 
@@ -336,7 +336,7 @@ namespace Petstore
         /// 
         /// </summary>
         /// <param name="username">The name that needs to be fetched. Use user1 for testing. </param>
-        public async Task<User> GetUserByName(string username)
+        public async Task<User> getUserByName(string username)
         {
             var url = "user/{username}"
                 .Replace("{username}", username.ToString());
@@ -353,7 +353,7 @@ namespace Petstore
         /// </summary>
         /// <param name="username">name that need to be deleted</param>
         /// <param name="body">Updated user object</param>
-        public async Task UpdateUser(string username, User body = null)
+        public async Task updateUser(string username, User body = null)
         {
             var url = "user/{username}"
                 .Replace("{username}", username.ToString());
@@ -368,7 +368,7 @@ namespace Petstore
         /// This can only be done by the logged in user.
         /// </summary>
         /// <param name="username">The name that needs to be deleted</param>
-        public async Task DeleteUser(string username)
+        public async Task deleteUser(string username)
         {
             var url = "user/{username}"
                 .Replace("{username}", username.ToString());

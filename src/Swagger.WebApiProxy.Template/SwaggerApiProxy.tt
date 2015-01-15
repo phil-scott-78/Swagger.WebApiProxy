@@ -81,18 +81,12 @@
 				// Async operations (web methods)
 				foreach (var operationDef in proxyDefinition.Operations.Where(i=>i.ProxyName.Equals(proxy))) {
 					string returnType = string.IsNullOrEmpty(operationDef.ReturnType) ? string.Empty : string.Format("<{0}>", operationDef.ReturnType);
-					string parameters = string.Join(", ", operationDef.Parameters
-									.OrderByDescending(i=>i.IsRequired).Select(
-										x => (x.IsRequired == false) ? 
-											x.Type.IsNullableType ? string.Format("{0}? {1} = null", x.Type.TypeName, x.Type.Name) : string.Format("{0} {1} = null", x.Type.TypeName, x.Type.Name) 
-											:  string.Format("{0} {1}", x.Type.TypeName, x.Type.Name)));
-
-
-				    var enums = operationDef.Parameters.Where(i => i.Type.EnumValues != null);
+					var enums = operationDef.Parameters.Where(i => i.Type.EnumValues != null);
 				    if (enums != null)
 				    {
 				        foreach (var enumParam in enums)
 				        {
+				            enumParam.Type.TypeName = operationDef.OperationId + enumParam.Type.Name;
 				            proxyParamEnums.Add(new Enum()
 				            {
 								Name = enumParam.Type.TypeName,
@@ -100,6 +94,15 @@
 				            });
 				        }
 				    }
+
+					string parameters = string.Join(", ", operationDef.Parameters
+									.OrderByDescending(i=>i.IsRequired).Select(
+										x => (x.IsRequired == false) ? 
+											x.Type.IsNullableType ? string.Format("{0}? {1} = null", x.Type.TypeName, x.Type.Name) : string.Format("{0} {1} = null", x.Type.TypeName, x.Type.Name) 
+											:  string.Format("{0} {1}", x.Type.TypeName, x.Type.Name)));
+
+
+
 
 					WriteLine("/// <summary>");
 					WriteLine("/// {0}", SecurityElement.Escape(operationDef.Description));
@@ -276,10 +279,9 @@
 				
 				foreach (var proxyParamEnum in proxyParamEnums)
 			    {
-					var csharpCodeProvider = new CSharpCodeProvider();
 			        WriteLine("public enum {0}", FixTypeName(proxyParamEnum.Name));
 					WriteLine("{");
-			        foreach (var value in proxyParamEnum.Values)
+			        foreach (var value in proxyParamEnum.Values.Distinct())
 			        {
 			            WriteLine("{0},", FixTypeName(value));
 			        }
@@ -294,8 +296,7 @@
 			foreach (var classDef in proxyDefinition.ClassDefinitions) 
 			{			
 				List<Enum> modelEnums = new List<Enum>();
-
-				
+			
 				WriteLine("public class {0} {1}", classDef.Name, string.IsNullOrEmpty(classDef.Inherits) ? string.Empty : string.Format(": {0}", classDef.Inherits));
 				WriteLine("{");;
 				foreach(var prop in classDef.Properties) {
@@ -315,7 +316,7 @@
 					var csharpCodeProvider = new CSharpCodeProvider();
 			        WriteLine("public enum {0}", csharpCodeProvider.CreateValidIdentifier(modelEnum.Name));
 					WriteLine("{");
-			        foreach (var value in modelEnum.Values)
+			        foreach (var value in modelEnum.Values.Distinct())
 			        {
 			            WriteLine("{0},", FixTypeName(value));
 			        }
@@ -389,11 +390,15 @@
 
     static string FixTypeName(string input)
     {
-	    var csharpCodeProvider = new CSharpCodeProvider();
-        var output = csharpCodeProvider.CreateValidIdentifier(input.Replace(" ", ""));
+        if (string.IsNullOrWhiteSpace(input))
+            return input;
+
+	    //var csharpCodeProvider = new CSharpCodeProvider();
+        var output = input.Replace(" ", "").Replace("[", "<").Replace("]", ">");
         if (char.IsLetter(output[0]) == false)
             output = "_" + output;
-        return char.ToUpper(output[0]) + output.Substring(1);
+
+        return output;
     }
 
     public static class Settings
@@ -551,7 +556,7 @@
                             parameters.Add(new Parameter(type, parameterIn, isRequired, propDescription, collectionFormat));
                         }
                     }
-
+					
                     proxyDefinition.Operations.Add(new Operation(returnType, method, path, parameters, operationId, description, proxyName));
                 }
             }
@@ -561,6 +566,7 @@
         {
             foreach (var definitionToken in jObject["definitions"].Where(i => i.Type == JTokenType.Property).Cast<JProperty>())
             {
+                bool addIt = true;
                 var classDefinition = new ClassDefinition(definitionToken.Name);
                 var allOf = definitionToken.First["allOf"];
                 if (allOf != null)
@@ -587,15 +593,26 @@
                 else
                 {
                     var properties = definitionToken.Value["properties"];
-                    foreach (var prop in properties)
+					if (properties != null)
                     {
-                        var type = ParseType(prop);
-                        classDefinition.Properties.Add(type);
+                        foreach (var prop in properties)
+						{
+							var type = ParseType(prop);
+							classDefinition.Properties.Add(type);
+						}
                     }
+					else
+					{
+					    addIt = false;
+					}
                 }
 
-
-                proxyDefinition.ClassDefinitions.Add(classDefinition);
+                classDefinition.Name = classDefinition.Name.Replace("[", "<").Replace("]", ">");
+				
+                if (addIt)
+                {
+                    proxyDefinition.ClassDefinitions.Add(classDefinition);
+                }
             }
         }
 
@@ -629,6 +646,7 @@
                 typeName = FixTypeName(name + "Values");
             }
 			
+			typeName = typeName.Replace("[", "<").Replace("]", ">");
 			TypeDefinition type = new TypeDefinition(typeName, name, enumValues, isNullable);
             return type;
         }
@@ -644,13 +662,13 @@
             if (refType != null)
             {
                 isNullable = false;
-                return this.ParseRef(refType.Value.ToString());
+                return FixTypeName(this.ParseRef(refType.Value.ToString()));
             }
 
             var schema = token["schema"];
             if (schema != null)
             {
-                return this.GetTypeName(schema, out isNullable);
+                return FixTypeName(this.GetTypeName(schema, out isNullable));
             }
 
             var type = token["type"] as JValue;

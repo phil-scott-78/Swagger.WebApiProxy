@@ -7,7 +7,7 @@ using System.Net.Http;
 
 // Swagger.WebApiProxy.Demo.WebApi
 // 
-// Generated at 1/13/2015 11:26:13 AM
+// Generated at 1/15/2015 2:57:20 PM
 namespace Demo
 {
     /// <summary>
@@ -31,7 +31,7 @@ namespace Demo
         /// 
         /// </summary>
         /// <param name="status"></param>
-        public async Task<List<Product>> GetProductByStatusAsync(StatusValues status)
+        public async Task<List<Product>> GetProductByStatusAsync(GetProductByStatusstatus status)
         {
             var url = "api/products";
             url = AppendQuery(url, "status", status.ToString());
@@ -73,7 +73,7 @@ namespace Demo
                 return await response.Content.ReadAsAsync<Product>().ConfigureAwait(false);
             }
         }
-        public enum StatusValues
+        public enum GetProductByStatusstatus
         {
             InStock,
             OutOfStock,
@@ -114,6 +114,20 @@ namespace Demo
                 var response = await client.GetAsync(url).ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadAsAsync<List<string>>().ConfigureAwait(false);
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public async Task<LookupObjectList<ValueLookup>> LookupListAsync()
+        {
+            var url = "api/products/lookup";
+
+            using (var client = BuildHttpClient())
+            {
+                var response = await client.PostAsync(url, new StringContent(string.Empty)).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsAsync<LookupObjectList<ValueLookup>>().ConfigureAwait(false);
             }
         }
         /// <summary>
@@ -218,5 +232,14 @@ namespace Demo
             _0,
             _1,
         }
+    }
+    public class LookupObjectList<ValueLookup>
+    {
+        public Dictionary<Int32, ValueLookup> Lookups { get; set; }
+    }
+    public class ValueLookup
+    {
+        public int Id { get; set; }
+        public string Value { get; set; }
     }
 }
