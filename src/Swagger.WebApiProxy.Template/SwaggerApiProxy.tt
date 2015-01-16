@@ -15,17 +15,16 @@
 <#@ import namespace="System.Runtime.InteropServices.ComTypes" #>
 <#@ import namespace="System.Security" #>
 <#@ import namespace="System.Xml.Serialization" #>
+<#@ import namespace="Microsoft.CSharp" #>
 
-<#@ include file="TemplateFilemanager.CS.ttinclude" #>
-<#@ output extension=".txt" #>
+
+<#@ output extension=".cs" #>
 <# 
-	var fileManager = TemplateFileManager.Create(this);
-
-    fileManager.IsAutoIndentEnabled = true;
-    fileManager.CanOverwriteExistingFile = true;
-
     var path = Host.ResolvePath("");
     var swaggerApiProxySettings = Settings.GetSettings(path);
+
+	// using directives
+	PrintHeaders();
     foreach (var endPoint in swaggerApiProxySettings.EndPoints)
     {
         var httpClient = new HttpClient();
@@ -41,12 +40,9 @@
 			var parser = new SwaggerParser();
 			var proxyDefinition = parser.ParseSwaggerDoc(result, endPoint.ParseOperationIdForProxyName);
 
-			fileManager.StartNewFile(endPoint.Id + ".cs");
-        
-			// using directives
-			PrintHeaders();
-			PrintDescription(proxyDefinition);
-
+       
+			
+			
 			WriteLine("namespace {0}{{", endPoint.Namespace);
 
 
@@ -337,7 +333,6 @@
         }
 
     }
-    fileManager.Process(true);
     #>        
 
     <#+
@@ -638,12 +633,23 @@
             if (enumToken != null)
             {
                 List<string> enumList = new List<string>();
+                bool anyRawNumbers = false;
+
                 foreach (var enumValueToken in enumToken)
                 {
-                    enumList.Add(enumValueToken.ToString());
+                    var enumValue = enumValueToken.ToString();
+                    decimal value;
+                    if (Decimal.TryParse(enumValue, out value))
+                    {
+                        anyRawNumbers = true;
+                    }
+                    enumList.Add(enumValue);
                 }
-                enumValues = enumList.ToArray();
-                typeName = FixTypeName(name + "Values");
+                if (anyRawNumbers == false)
+                {
+					enumValues = enumList.ToArray();
+					typeName = FixTypeName(name + "Values");    
+                }                
             }
 			
 			typeName = typeName.Replace("[", "<").Replace("]", ">");

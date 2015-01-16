@@ -51,10 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseProxy.cs" />
-    <Compile Include="Demo.cs">
-      <DependentUpon>DemoClient.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Petstore.cs">
+    <Compile Include="DemoClient.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
       <DependentUpon>DemoClient.tt</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -64,7 +63,7 @@
     <None Include="App.config" />
     <None Include="DemoClient.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>DemoClient.txt</LastGenOutput>
+      <LastGenOutput>DemoClient.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
@@ -72,11 +71,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DemoClient.txt">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DemoClient.tt</DependentUpon>
-    </Content>
     <Content Include="SwaggerApiProxy.tt.settings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

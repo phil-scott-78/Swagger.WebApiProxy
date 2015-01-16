@@ -50,25 +50,24 @@
   <ItemGroup>
     <Compile Include="BaseProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SwaggerApiProxy.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SwaggerApiProxy.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="SwaggerApiProxy.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>SwaggerApiProxy.txt</LastGenOutput>
+      <LastGenOutput>SwaggerApiProxy.cs</LastGenOutput>
     </None>
-    <None Include="TemplateFilemanager.CS.ttinclude" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SwaggerApiProxy.tt.settings.xml" />
-    <Content Include="SwaggerApiProxy.txt">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SwaggerApiProxy.tt</DependentUpon>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
