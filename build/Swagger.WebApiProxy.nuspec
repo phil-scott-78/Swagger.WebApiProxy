@@ -19,7 +19,6 @@
   <files>
     <file src="..\src\Swagger.WebApiProxy.Template\SwaggerApiProxy.tt" target="content" />
     <file src="..\src\Swagger.WebApiProxy.Template\SwaggerApiProxy.tt.settings.xml" target="content" />
-    <file src="..\src\Swagger.WebApiProxy.Template\TemplateFilemanager.CS.ttinclude" target="content" />
     <file src="..\src\Swagger.WebApiProxy.Template\BaseProxy.cs" target="content" />
   </files>
 </package>
