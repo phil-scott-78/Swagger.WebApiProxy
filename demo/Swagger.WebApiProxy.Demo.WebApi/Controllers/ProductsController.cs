@@ -9,6 +9,10 @@ using Swagger.WebApiProxy.Demo.WebApi.Models;
 
 namespace Swagger.WebApiProxy.Demo.WebApi.Controllers
 {
+    /// <summary>
+    /// Documentation for controller
+    /// that is on multiple lines
+    /// </summary>
     public class ProductsController : ApiController
     {
         readonly Product[] _products = new Product[] 
@@ -18,6 +22,12 @@ namespace Swagger.WebApiProxy.Demo.WebApi.Controllers
             new Product { Id = 3, Name = "Hammer", Category = "Hardware", Price = 16.99M, Status = ProductStatus.InStock, OtherStoreStatus = ProductStatus.InStock, Oops = OopsNoString.FirstValue}
         };
 
+        /// <summary>
+        /// Documentation for method
+        /// this is on multiple
+        /// line
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Product> GetAllProducts()
         {
             return _products;

@@ -101,11 +101,11 @@
 
 
 					WriteLine("/// <summary>");
-					WriteLine("/// {0}", SecurityElement.Escape(operationDef.Description));
+					WriteLine("/// {0}", (SecurityElement.Escape(operationDef.Description) ?? "").Replace("\n", "\n///"));
 				    WriteLine("/// </summary>");
 					foreach (var parameter in operationDef.Parameters)
 					{
-						WriteLine("/// <param name=\"{0}\">{1}</param>", parameter.Type.Name, SecurityElement.Escape(parameter.Description));
+						WriteLine("/// <param name=\"{0}\">{1}</param>", parameter.Type.Name, (SecurityElement.Escape(parameter.Description) ?? "").Replace("\n", "\n///"));
 					}
 					
 					WriteLine("public async Task{0} {1}{2} ({3})", returnType, FixTypeName(operationDef.OperationId), methodNameAppend, parameters);

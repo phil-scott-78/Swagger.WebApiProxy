@@ -1,3 +1,4 @@
+using System;
 using System.Web.Http;
 using WebActivatorEx;
 using Swagger.WebApiProxy.Demo.WebApi;
@@ -133,7 +134,7 @@ namespace Swagger.WebApiProxy.Demo.WebApi
                         // those comments into the generated docs and UI. You can enable this by providing the path to one or
                         // more Xml comment files.
                         //
-                        //c.IncludeXmlComments(GetXmlCommentsPath());
+                        c.IncludeXmlComments(GetXmlCommentsPath());
 
                         // In contrast to WebApi, Swagger 2.0 does not include the query string component when mapping a URL
                         // to an action. As a result, Swashbuckle will raise an exception if it encounters multiple actions
@@ -188,6 +189,11 @@ namespace Swagger.WebApiProxy.Demo.WebApi
                         //
                         c.EnableOAuth2Support("test-client-id", "test-realm", "Swagger UI");
                     });
+        }
+
+        private static string GetXmlCommentsPath()
+        {
+            return string.Format(@"{0}\bin\Swagger.WebApiProxy.Demo.WebApi.XML", AppDomain.CurrentDomain.BaseDirectory);
         }
     }
 }
