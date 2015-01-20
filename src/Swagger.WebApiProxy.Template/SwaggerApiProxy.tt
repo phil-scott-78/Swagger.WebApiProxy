@@ -5,7 +5,7 @@
 <#@ assembly name="System.Xml.Serialization" #>
 <#@ assembly name="System.Xml.Linq" #>
 <#@ assembly name="EnvDTE" #>
-<#@ assembly name="Newtonsoft.Json.dll" #>
+<#@ assembly name="$(myLibFolder)\Newtonsoft.Json.dll" #>
 <#@ import namespace="Newtonsoft.Json.Linq" #>
 <#@ import namespace="Newtonsoft.Json.Schema" #>
 <#@ import namespace="System.Collections.Generic" #>
@@ -741,7 +741,7 @@
                         return "float";
 
                     if (format.Value.Equals("double"))
-                        return "long";
+                        return "double";
 
                     if (format.Value.Equals("decimal"))
                         return "decimal";

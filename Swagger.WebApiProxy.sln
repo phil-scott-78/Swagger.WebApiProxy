@@ -13,6 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swagger.WebApiProxy.Demo.Cl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{7A292A84-0C3D-4D4A-8EB6-7366928461AC}"
 	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
 		build\Swagger.WebApiProxy.nuspec = build\Swagger.WebApiProxy.nuspec
 	EndProjectSection
 EndProject
