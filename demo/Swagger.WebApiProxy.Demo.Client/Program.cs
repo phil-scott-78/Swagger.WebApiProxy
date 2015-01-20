@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Demo;
 using Petstore;
 
 namespace Swagger.WebApiProxy.Demo.Client
@@ -24,6 +25,9 @@ namespace Swagger.WebApiProxy.Demo.Client
             {
                 Console.WriteLine(ex.ToString());
             }
+
+            ValuesWebProxy valuesWebProxy = new ValuesWebProxy(new Uri("http://localhost:54076/"));
+            var allTheDataTypes = valuesWebProxy.GetDataTypesAsync().Result;
             Console.ReadLine();
         }
     }

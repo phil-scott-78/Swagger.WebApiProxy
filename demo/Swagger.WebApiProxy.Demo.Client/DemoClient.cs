@@ -519,6 +519,20 @@ return await response.Content.ReadAsAsync<List<string>>().ConfigureAwait(false);
 /// <summary>
 /// 
 /// </summary>
+public async Task<AllTheDataTypes> GetDataTypesAsync ()
+{
+var url = "api/values/dataTypes";
+
+using (var client = BuildHttpClient())
+{
+var response = await client.GetAsync(url).ConfigureAwait(false);
+response.EnsureSuccessStatusCode();
+return await response.Content.ReadAsAsync<AllTheDataTypes>().ConfigureAwait(false);
+}
+}
+/// <summary>
+/// 
+/// </summary>
 public async Task<LookupObjectList<ValueLookup>> LookupListAsync ()
 {
 var url = "api/products/lookup";
@@ -611,7 +625,7 @@ public class Product
 public int Id { get; set; }
 public string Name { get; set; }
 public string Category { get; set; }
-public long Price { get; set; }
+public decimal Price { get; set; }
 public StatusValues Status { get; set; }
 public OtherStoreStatusValues OtherStoreStatus { get; set; }
 public int Oops { get; set; }
@@ -627,6 +641,18 @@ InStock,
 OutOfStock,
 BackOrdered,
 }
+}
+public class AllTheDataTypes 
+{
+public string StringType { get; set; }
+public decimal DecimalType { get; set; }
+public float FloatType { get; set; }
+public long DoubleType { get; set; }
+public byte ByteType { get; set; }
+public int IntType { get; set; }
+public long LongType { get; set; }
+public bool BoolType { get; set; }
+public string CharType { get; set; }
 }
 public class LookupObjectList<ValueLookup> 
 {

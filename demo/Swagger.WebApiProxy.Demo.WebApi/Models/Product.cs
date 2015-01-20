@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Policy;
 using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -29,5 +30,18 @@ namespace Swagger.WebApiProxy.Demo.WebApi.Models
     {
         FirstValue,
         SecondValue
+    }
+
+    public class AllTheDataTypes
+    {
+        public string StringType { get; set; }
+        public Decimal DecimalType { get; set; }
+        public float FloatType { get; set; }
+        public double DoubleType { get; set; }
+        public byte ByteType { get; set; }
+        public int IntType { get; set; }
+        public long LongType { get; set; }
+        public bool BoolType { get; set; }
+        public char CharType { get; set; }
     }
 }

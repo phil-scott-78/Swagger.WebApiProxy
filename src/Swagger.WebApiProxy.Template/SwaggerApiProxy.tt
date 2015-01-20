@@ -742,6 +742,9 @@
 
                     if (format.Value.Equals("double"))
                         return "long";
+
+                    if (format.Value.Equals("decimal"))
+                        return "decimal";
                 }
             }
 

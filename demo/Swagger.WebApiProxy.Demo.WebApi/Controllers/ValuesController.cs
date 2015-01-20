@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -15,6 +16,24 @@ namespace Swagger.WebApiProxy.Demo.WebApi.Controllers
         {
             return new string[] {"value1", "value2"};
         }
+
+        [Route("api/values/dataTypes")]
+        public AllTheDataTypes GetDataTypes()
+        {
+            return new AllTheDataTypes
+            {
+                BoolType = true,
+                ByteType = 1,
+                CharType = 'P',
+                DecimalType = new decimal(1.2),
+                DoubleType = 22d/8,
+                FloatType = 22f/7,
+                IntType = int.MaxValue,
+                LongType = long.MaxValue,
+                StringType = "hi mom"
+            };
+        }
+        
 
         // GET api/values/5
         public string Get(int id)

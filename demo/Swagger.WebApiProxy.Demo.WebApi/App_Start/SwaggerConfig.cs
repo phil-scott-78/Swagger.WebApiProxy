@@ -3,6 +3,7 @@ using System.Web.Http;
 using WebActivatorEx;
 using Swagger.WebApiProxy.Demo.WebApi;
 using Swashbuckle.Application;
+using Swashbuckle.Swagger;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
@@ -100,7 +101,7 @@ namespace Swagger.WebApiProxy.Demo.WebApi
                         // use the "MapType" option when the resulting Schema is a primitive or array type. If you need to alter a
                         // complex Schema, use a Schema filter.
                         //
-                        //c.MapType<ProductType>(() => new Schema { type = "integer", format = "int32" });
+                        c.MapType<Decimal>(() => new Schema { type = "number", format = "decimal" });
                         //
                         // If you want to post-modify "complex" Schemas once they've been generated, across the board or for a
                         // specific type, you can wire up one or more Schema filters.
