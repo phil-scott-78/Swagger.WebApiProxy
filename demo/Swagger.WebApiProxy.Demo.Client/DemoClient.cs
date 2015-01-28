@@ -626,6 +626,7 @@ public int Id { get; set; }
 public string Name { get; set; }
 public string Category { get; set; }
 public decimal Price { get; set; }
+public DateTime? DateDiscontinued { get; set; }
 public StatusValues Status { get; set; }
 public OtherStoreStatusValues OtherStoreStatus { get; set; }
 public int Oops { get; set; }

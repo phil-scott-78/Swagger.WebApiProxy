@@ -196,7 +196,7 @@
 							var putBodyParam = operationDef.Parameters.FirstOrDefault(i => i.ParameterIn == ParameterIn.Body);
 							if (putBodyParam != null)
 							{
-								WriteLine("var response = await client.PostAsJsonAsync(url, {0}).ConfigureAwait(false);", putBodyParam.Type.Name);   
+								WriteLine("var response = await client.PutAsJsonAsync(url, {0}).ConfigureAwait(false);", putBodyParam.Type.Name);   
 							}
 							else if (operationDef.Parameters.Any(i => i.ParameterIn == ParameterIn.FormData))
 							{
@@ -499,6 +499,8 @@
                     {
                         bool dummyNullable;
                         returnType = this.GetTypeName(schema, out dummyNullable);
+                        if (returnType != null && returnType.Equals("Void"))
+                            returnType = null;
                     }
                     else
                     {
@@ -603,7 +605,11 @@
                 }
 
                 classDefinition.Name = classDefinition.Name.Replace("[", "<").Replace("]", ">");
-				
+                if (classDefinition.Name.Equals("Void", StringComparison.InvariantCulture))
+                {
+                    addIt = false;
+                }
+
                 if (addIt)
                 {
                     proxyDefinition.ClassDefinitions.Add(classDefinition);
@@ -665,6 +671,7 @@
         internal string GetTypeName(JToken token, out bool isNullable)
         {
             var refType = token["$ref"] as JValue;
+            bool hasNullFlag = false;
             if (refType != null)
             {
                 isNullable = false;
@@ -682,6 +689,22 @@
             {
                 isNullable = false;
                 return null;
+            }
+
+			var nullableToken = token["x-nullable"] as JValue;
+            if (nullableToken != null)
+            {
+                hasNullFlag = true;
+            }
+
+            bool required = true;
+			var requiredToken = token["required"]  as JValue;
+            if (requiredToken != null)
+            {
+                if ((bool) requiredToken.Value == false)
+                {
+                    required = false;
+                }
             }
 
             if (type.Value.Equals("boolean"))
@@ -702,13 +725,13 @@
                 if (format.Value.Equals("date") || format.Value.Equals("date-time"))
                 {
                     isNullable = true;
-                    return "DateTime";
+                    return (hasNullFlag) ? "DateTime?" : "DateTime";
                 }
 
                 if (format.Value.Equals("byte"))
                 {
                     isNullable = true;
-                    return "byte";
+                    return (hasNullFlag) ? "byte?" : "byte";
                 }
 
                 isNullable = false;
@@ -722,10 +745,11 @@
                 if (format != null)
                 {
                     if (format.Value.Equals("int32"))
-                        return "int";
+                        return (hasNullFlag) ? "int?" : "int";
+
 
                     if (format.Value.Equals("int64"))
-                        return "long";
+                        return (hasNullFlag) ? "long?" : "long";
                 }
 
                 return "int";
@@ -738,13 +762,13 @@
                 if (format != null)
                 {
                     if (format.Value.Equals("float"))
-                        return "float";
+                        return (hasNullFlag) ? "float?" : "float";
 
                     if (format.Value.Equals("double"))
-                        return "double";
+                        return (hasNullFlag) ? "double?" : "double";
 
                     if (format.Value.Equals("decimal"))
-                        return "decimal";
+                        return (hasNullFlag) ? "decimal?" : "decimal";
                 }
             }
 

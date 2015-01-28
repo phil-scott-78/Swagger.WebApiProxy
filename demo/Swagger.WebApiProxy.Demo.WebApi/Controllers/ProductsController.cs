@@ -17,7 +17,7 @@ namespace Swagger.WebApiProxy.Demo.WebApi.Controllers
     {
         readonly Product[] _products = new Product[] 
         {
-            new Product { Id = 1, Name = "Tomato Soup", Category = "Groceries", Price = 1 , Status = ProductStatus.BackOrdered, OtherStoreStatus = ProductStatus.InStock, Oops = OopsNoString.FirstValue},
+            new Product { Id = 1, Name = "Tomato Soup", Category = "Groceries", Price = 1 , Status = ProductStatus.OutOfStock, OtherStoreStatus = ProductStatus.OutOfStock, Oops = OopsNoString.FirstValue, DateDiscontinued = new DateTime(2014,12,29)},
             new Product { Id = 2, Name = "Yo-yo", Category = "Toys", Price = 3.75M, Status = ProductStatus.InStock, OtherStoreStatus = ProductStatus.InStock, Oops = OopsNoString.SecondValue},
             new Product { Id = 3, Name = "Hammer", Category = "Hardware", Price = 16.99M, Status = ProductStatus.InStock, OtherStoreStatus = ProductStatus.InStock, Oops = OopsNoString.FirstValue}
         };

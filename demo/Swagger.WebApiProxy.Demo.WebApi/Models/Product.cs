@@ -12,6 +12,7 @@ namespace Swagger.WebApiProxy.Demo.WebApi.Models
         public string Name { get; set; }
         public string Category { get; set; }
         public decimal Price { get; set; }
+        public DateTime? DateDiscontinued { get; set; }
 
         public ProductStatus Status { get; set; }
         public ProductStatus OtherStoreStatus { get; set; }

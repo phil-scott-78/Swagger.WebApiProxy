@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Web.Http;
 using WebActivatorEx;
 using Swagger.WebApiProxy.Demo.WebApi;
@@ -101,7 +102,14 @@ namespace Swagger.WebApiProxy.Demo.WebApi
                         // use the "MapType" option when the resulting Schema is a primitive or array type. If you need to alter a
                         // complex Schema, use a Schema filter.
                         //
+
                         c.MapType<Decimal>(() => new Schema { type = "number", format = "decimal" });
+
+                        // swagger specs don't support the concept of a nullable type out of the box - they use required fields instead
+                        // we can't do that due to using our data model as our rest api so we are in a bind here
+                        var nullable = new Dictionary<string, object>(1) {{"x-nullable", true}};
+                        c.MapType<DateTime?>(() => new Schema { type = "string", format = "date-time", vendorExtensions = nullable});
+
                         //
                         // If you want to post-modify "complex" Schemas once they've been generated, across the board or for a
                         // specific type, you can wire up one or more Schema filters.
