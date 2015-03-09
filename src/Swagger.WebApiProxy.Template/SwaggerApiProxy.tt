@@ -261,7 +261,7 @@
 						default:
 							break;
 					}
-					WriteLine("response.EnsureSuccessStatusCode();");
+					WriteLine("EnsureSuccessStatusCodeAsync(response);");
 
 					if (string.IsNullOrWhiteSpace(operationDef.ReturnType) == false)
 					{
