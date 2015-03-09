@@ -32,7 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-    <PropertyGroup>
+  <PropertyGroup>
     <myLibFolder>$(MSBuildProjectDirectory)\..\..\packages\Newtonsoft.Json.6.0.6\lib\net45</myLibFolder>
   </PropertyGroup>
   <!-- Tell the MSBuild T4 task to make the property available: -->

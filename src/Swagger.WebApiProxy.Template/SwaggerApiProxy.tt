@@ -259,7 +259,7 @@
 						default:
 							break;
 					}
-					WriteLine("response.EnsureSuccessStatusCode();");
+					WriteLine("await EnsureSuccessStatusCodeAsync(response);");
 
 					if (string.IsNullOrWhiteSpace(operationDef.ReturnType) == false)
 					{
