@@ -95,7 +95,7 @@
 					string parameters = string.Join(", ", operationDef.Parameters
 									.OrderByDescending(i=>i.IsRequired).Select(
 										x => (x.IsRequired == false) ?
-										 string.Format("{0} {1} = {2}", x.CollectionFormat == "multi" ? string.Format("List<{0}>", x.Type.TypeName) : x.Type.TypeName, x.Type.Name, GetDefaultValue(x)) 
+										 string.Format("{0} {1} = {2}", GetDefaultType(x), x.Type.Name, GetDefaultValue(x)) 
 										 :  string.Format("{0} {1}", x.Type.TypeName, x.Type.Name)));
 										 
 					WriteLine("/// <summary>");
@@ -200,7 +200,7 @@
 							{
 							    var formData = operationDef.Parameters.Where(i => i.ParameterIn == ParameterIn.FormData).ToList();
 							    WriteLine("var formKeyValuePairs = new List<KeyValuePair<string, string>>();");
-							    foreach (var formParam in formData)
+							    foreach (var formParam in formData.Where(x => x.Type.TypeName != "file"))
 							    {
 							        if (formParam.IsRequired == false)
 							        {
@@ -212,7 +212,11 @@
 							            WriteLine("}");
 							        }
 							    }
-								
+							    foreach (var formParam in formData.Where(x => x.Type.TypeName == "file"))
+							    {
+							        WriteLine("var fileContent = new ByteArrayContent({0}.Item1);", formParam.Type.Name);
+							        WriteLine("fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue(\"attachment\") { FileName = \"{0}.Item2\" };", formParam.Type.Name);
+							    }
 							    WriteLine("HttpContent content = new FormUrlEncodedContent(formKeyValuePairs);");
 							    WriteLine("var response = await client.PutAsync(url, content).ConfigureAwait(false);");								
 							}
@@ -233,7 +237,7 @@
 							{
 							    var formData = operationDef.Parameters.Where(i => i.ParameterIn == ParameterIn.FormData).ToList();
 							    WriteLine("var formKeyValuePairs = new List<KeyValuePair<string, string>>();");
-							    foreach (var formParam in formData)
+							    foreach (var formParam in formData.Where(x => x.Type.TypeName != "file"))
 							    {
 							        if (formParam.IsRequired == false)
 							        {
@@ -245,7 +249,11 @@
 							            WriteLine("}");
 							        }
 							    }
-								
+								foreach (var formParam in formData.Where(x => x.Type.TypeName == "file"))
+							    {
+							        WriteLine("var {0}Content = new ByteArrayContent({0}.Item2);", formParam.Type.Name);
+							        WriteLine("{0}Content.Headers.ContentDisposition = new ContentDispositionHeaderValue(\"attachment\") {{ FileName = {0}.Item1 }};", formParam.Type.Name);
+							    }
 							    WriteLine("HttpContent content = new FormUrlEncodedContent(formKeyValuePairs);");
 							    WriteLine("var response = await client.PostAsync(url, content).ConfigureAwait(false);");								
 							}
@@ -335,6 +343,17 @@
 
     <#+
 
+	string GetDefaultType(Parameter x)
+	{
+	    if (x.Type.TypeName == "file")
+	    {
+	        return "Tuple<string, byte[]>";
+	    }
+
+	    var output = x.CollectionFormat == "multi" ? string.Format("List<{0}>", x.Type.TypeName) : x.Type.TypeName;
+	    return output;
+	}
+
     string GetDefaultValue(Parameter x)
     {
         if (!x.Type.IsNullableType && x.CollectionFormat != "multi" && x.Type.EnumValues != null && x.Type.EnumValues.Any())
@@ -351,6 +370,7 @@
         WriteLine("using System.Collections.Generic;");
 		WriteLine("using System.Threading.Tasks;");
 		WriteLine("using System.Net.Http;");
+		WriteLine("using System.Net.Http.Headers;");
 		WriteLine("");
 		WriteLine("// ReSharper disable All");
 		WriteLine("");
@@ -723,11 +743,16 @@
                 bool throwawayNullable; // we don't care what the underlying 
                 return string.Format("List<{0}>", this.GetTypeName(jToken, out throwawayNullable));
             }
-
-            if (type.Value.Equals("boolean"))
+			if (type.Value.Equals("boolean"))
             {
                 isNullable = true;
                 return "bool";
+            }
+
+            if (type.Value.Equals("file"))
+            {
+                isNullable = true;
+                return "file";
             }
             if (type.Value.Equals("string"))
             {
