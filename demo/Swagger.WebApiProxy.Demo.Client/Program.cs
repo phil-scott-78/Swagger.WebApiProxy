@@ -10,13 +10,21 @@ namespace Swagger.WebApiProxy.Demo.Client
     {
         static void Main(string[] args)
         {
-            petWebProxy petstoreWebProxy = new petWebProxy(new Uri("http://petstore.swagger.wordnik.com/v2/"));
-            var petById = petstoreWebProxy.getPetById(1).Result;
-            Console.WriteLine(petById.name);
+            petWebProxy petstoreWebProxy = new petWebProxy(new Uri("http://petstore.swagger.io/v2/swagger.json"));
+
+            try
+            {
+                var petById = petstoreWebProxy.getPetById(1).Result;
+                Console.WriteLine(petById.name);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
             petstoreWebProxy.updatePetWithForm("1", "fido", "hmmm").Wait();
 
-            var result = petstoreWebProxy.findPetsByStatus(petWebProxy.findPetsByStatusstatus.available).Result;
+            var result = petstoreWebProxy.findPetsByStatus(new List<petWebProxy.findPetsByStatusstatus>{petWebProxy.findPetsByStatusstatus.available}).Result;
 
             try
             {

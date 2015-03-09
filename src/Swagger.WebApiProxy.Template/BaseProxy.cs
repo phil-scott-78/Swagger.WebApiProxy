@@ -23,20 +23,17 @@ namespace Swagger.WebApiProxy.Template
             httpClient.BaseAddress = _baseUrl;
             return httpClient;
         }
-    }
 
-
-    public static class HttpResponseMessageExtensions
-    {
-        public static async Task EnsureSuccessStatusCodeAsync(this HttpResponseMessage response)
+        public async Task EnsureSuccessStatusCodeAsync(HttpResponseMessage response)
         {
+            if (response.IsSuccessStatusCode)
+            {
+                return;
+            }
+
             try
             {
-                if (response.IsSuccessStatusCode)
-                {
-                    return;
-                }
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false); ;
                 throw new SimpleHttpResponseException(response.StatusCode, content);
             }
             finally
@@ -58,3 +55,4 @@ namespace Swagger.WebApiProxy.Template
         }
     }
 }
+

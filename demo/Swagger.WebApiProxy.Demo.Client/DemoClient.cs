@@ -2,6 +2,7 @@
 
 
 
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ var url = "pet";
 using (var client = BuildHttpClient())
 {
 var response = await client.PostAsJsonAsync(url, body).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
@@ -51,14 +52,14 @@ var url = "pet";
 using (var client = BuildHttpClient())
 {
 var response = await client.PutAsJsonAsync(url, body).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
 /// Multiple status values can be provided with comma seperated strings
 /// </summary>
 /// <param name="status">Status values that need to be considered for filter</param>
-public async Task<List<Pet>> findPetsByStatus (findPetsByStatusstatus status = null)
+public async Task<List<Pet>> findPetsByStatus (List<findPetsByStatusstatus> status = null)
 {
 var url = "pet/findByStatus";
 if (status != null){
@@ -71,7 +72,7 @@ url = AppendQuery(url, "status", item.ToString());
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<List<Pet>>().ConfigureAwait(false);
 }
 }
@@ -79,7 +80,7 @@ return await response.Content.ReadAsAsync<List<Pet>>().ConfigureAwait(false);
 /// Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.
 /// </summary>
 /// <param name="tags">Tags to filter by</param>
-public async Task<List<Pet>> findPetsByTags (List<string> tags = null)
+public async Task<List<Pet>> findPetsByTags (List<List<string>> tags = null)
 {
 var url = "pet/findByTags";
 if (tags != null){
@@ -92,7 +93,7 @@ url = AppendQuery(url, "tags", item.ToString());
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<List<Pet>>().ConfigureAwait(false);
 }
 }
@@ -108,7 +109,7 @@ var url = "pet/{petId}"
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<Pet>().ConfigureAwait(false);
 }
 }
@@ -134,7 +135,7 @@ formKeyValuePairs.Add(new KeyValuePair<string, string>("status", status));
 }
 HttpContent content = new FormUrlEncodedContent(formKeyValuePairs);
 var response = await client.PostAsync(url, content).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
@@ -150,7 +151,7 @@ var url = "pet/{petId}"
 using (var client = BuildHttpClient())
 {
 var response = await client.DeleteAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
@@ -159,7 +160,7 @@ EnsureSuccessStatusCodeAsync(response);
 /// <param name="petId">ID of pet to update</param>
 /// <param name="additionalMetadata">Additional data to pass to server</param>
 /// <param name="file">file to upload</param>
-public async Task<ApiResponse> uploadFile (long petId, string additionalMetadata = null,  file = null)
+public async Task<ApiResponse> uploadFile (long petId, string additionalMetadata = null, string  file = null)
 {
 var url = "pet/{petId}/uploadImage"
 	.Replace("{petId}", petId.ToString());
@@ -175,7 +176,7 @@ formKeyValuePairs.Add(new KeyValuePair<string, string>("file", file));
 }
 HttpContent content = new FormUrlEncodedContent(formKeyValuePairs);
 var response = await client.PostAsync(url, content).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<ApiResponse>().ConfigureAwait(false);
 }
 }
@@ -212,7 +213,7 @@ var url = "store/inventory";
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
@@ -226,7 +227,7 @@ var url = "store/order";
 using (var client = BuildHttpClient())
 {
 var response = await client.PostAsJsonAsync(url, body).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<Order>().ConfigureAwait(false);
 }
 }
@@ -242,7 +243,7 @@ var url = "store/order/{orderId}"
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<Order>().ConfigureAwait(false);
 }
 }
@@ -258,7 +259,7 @@ var url = "store/order/{orderId}"
 using (var client = BuildHttpClient())
 {
 var response = await client.DeleteAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 }
@@ -289,7 +290,7 @@ var url = "user";
 using (var client = BuildHttpClient())
 {
 var response = await client.PostAsJsonAsync(url, body).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
@@ -303,7 +304,7 @@ var url = "user/createWithArray";
 using (var client = BuildHttpClient())
 {
 var response = await client.PostAsJsonAsync(url, body).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
@@ -317,7 +318,7 @@ var url = "user/createWithList";
 using (var client = BuildHttpClient())
 {
 var response = await client.PostAsJsonAsync(url, body).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
@@ -338,7 +339,7 @@ url = AppendQuery(url, "password", password.ToString());
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<string>().ConfigureAwait(false);
 }
 }
@@ -352,7 +353,7 @@ var url = "user/logout";
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
@@ -367,7 +368,7 @@ var url = "user/{username}"
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<User>().ConfigureAwait(false);
 }
 }
@@ -384,7 +385,7 @@ var url = "user/{username}"
 using (var client = BuildHttpClient())
 {
 var response = await client.PutAsJsonAsync(url, body).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
@@ -399,7 +400,7 @@ var url = "user/{username}"
 using (var client = BuildHttpClient())
 {
 var response = await client.DeleteAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 }
@@ -488,7 +489,7 @@ var url = "api/products/kablam";
 using (var client = BuildHttpClient())
 {
 var response = await client.PostAsync(url, new StringContent(string.Empty)).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<int>().ConfigureAwait(false);
 }
 }
@@ -504,7 +505,7 @@ url = AppendQuery(url, "status", status.ToString());
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<List<Product>>().ConfigureAwait(false);
 }
 }
@@ -518,7 +519,7 @@ var url = "api/Products";
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<List<Product>>().ConfigureAwait(false);
 }
 }
@@ -534,7 +535,7 @@ var url = "api/Products/{id}"
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<Product>().ConfigureAwait(false);
 }
 }
@@ -576,7 +577,7 @@ url = AppendQuery(url, "query", item.ToString());
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<List<string>>().ConfigureAwait(false);
 }
 }
@@ -590,7 +591,7 @@ var url = "api/values/dataTypes";
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<AllTheDataTypes>().ConfigureAwait(false);
 }
 }
@@ -604,7 +605,7 @@ var url = "api/products/lookup";
 using (var client = BuildHttpClient())
 {
 var response = await client.PostAsync(url, new StringContent(string.Empty)).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<LookupObjectList<ValueLookup>>().ConfigureAwait(false);
 }
 }
@@ -618,7 +619,7 @@ var url = "api/Values";
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<List<string>>().ConfigureAwait(false);
 }
 }
@@ -633,7 +634,7 @@ var url = "api/Values";
 using (var client = BuildHttpClient())
 {
 var response = await client.PostAsJsonAsync(url, value).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
@@ -648,7 +649,7 @@ var url = "api/Values/{id}"
 using (var client = BuildHttpClient())
 {
 var response = await client.GetAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 return await response.Content.ReadAsAsync<string>().ConfigureAwait(false);
 }
 }
@@ -665,7 +666,7 @@ var url = "api/Values/{id}"
 using (var client = BuildHttpClient())
 {
 var response = await client.PutAsJsonAsync(url, value).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 /// <summary>
@@ -680,7 +681,7 @@ var url = "api/Values/{id}"
 using (var client = BuildHttpClient())
 {
 var response = await client.DeleteAsync(url).ConfigureAwait(false);
-EnsureSuccessStatusCodeAsync(response);
+await EnsureSuccessStatusCodeAsync(response);
 }
 }
 }
