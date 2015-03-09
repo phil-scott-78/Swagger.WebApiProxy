@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Swagger.WebApiProxy.Demo.WebApi.Models;
@@ -31,6 +32,22 @@ namespace Swagger.WebApiProxy.Demo.WebApi.Controllers
         public IEnumerable<Product> GetAllProducts()
         {
             return _products;
+        }
+
+        [ResponseType(typeof(int))]
+        [Route("api/products/kablam")]
+        public IHttpActionResult Kablam()
+        {
+            var i = 0;
+            try
+            {
+                var j = 100/i;
+                return Ok(j);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Kablam!", ex);
+            }
         }
 
         [ResponseType(typeof(IEnumerable<Product>))]
