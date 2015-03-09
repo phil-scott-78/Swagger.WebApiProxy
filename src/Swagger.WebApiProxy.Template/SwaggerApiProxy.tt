@@ -18,6 +18,7 @@
 <#@ import namespace="Microsoft.CSharp" #>
 
 
+
 <#@ output extension=".cs" #>
 <# 
     var path = Host.ResolvePath("");
@@ -93,13 +94,10 @@
 
 					string parameters = string.Join(", ", operationDef.Parameters
 									.OrderByDescending(i=>i.IsRequired).Select(
-										x => (x.IsRequired == false) ? 
-											x.Type.IsNullableType ? string.Format("{0}? {1} = null", x.Type.TypeName, x.Type.Name) : string.Format("{0} {1} = null", x.Type.TypeName, x.Type.Name) 
-											:  string.Format("{0} {1}", x.Type.TypeName, x.Type.Name)));
-
-
-
-
+										x => (x.IsRequired == false) ?
+										 string.Format("{0} {1} = {2}", x.CollectionFormat == "multi" ? string.Format("List<{0}>", x.Type.TypeName) : x.Type.TypeName, x.Type.Name, GetDefaultValue(x)) 
+										 :  string.Format("{0} {1}", x.Type.TypeName, x.Type.Name)));
+										 
 					WriteLine("/// <summary>");
 					WriteLine("/// {0}", (SecurityElement.Escape(operationDef.Description) ?? "").Replace("\n", "\n///"));
 				    WriteLine("/// </summary>");
@@ -336,6 +334,16 @@
     #>        
 
     <#+
+
+    string GetDefaultValue(Parameter x)
+    {
+        if (!x.Type.IsNullableType && x.CollectionFormat != "multi" && x.Type.EnumValues != null && x.Type.EnumValues.Any())
+        {
+            return string.Format("{0}.{1}", x.Type.TypeName, x.Type.EnumValues.FirstOrDefault());
+        }
+
+        return "null";
+    }
 
     void PrintHeaders()
     {
@@ -670,6 +678,7 @@
 
         internal string GetTypeName(JToken token, out bool isNullable)
         {
+
             var refType = token["$ref"] as JValue;
             bool hasNullFlag = false;
             if (refType != null)
@@ -705,6 +714,14 @@
                 {
                     required = false;
                 }
+            }
+
+			if (type.Value.Equals("array"))
+            {
+				isNullable = false;
+                var jToken = token["items"];
+                bool throwawayNullable; // we don't care what the underlying 
+                return string.Format("List<{0}>", this.GetTypeName(jToken, out throwawayNullable));
             }
 
             if (type.Value.Equals("boolean"))
@@ -772,13 +789,7 @@
                 }
             }
 
-            if (type.Value.Equals("array"))
-            {
-				isNullable = false;
-                var jToken = token["items"];
-                bool throwawayNullable; // we don't care what the underlying 
-                return string.Format("List<{0}>", this.GetTypeName(jToken, out throwawayNullable));
-            }
+            
 
             isNullable = false;
             return "";
