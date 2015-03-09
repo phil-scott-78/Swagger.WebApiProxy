@@ -1,9 +1,9 @@
 ﻿<SwaggerApiProxySettings>
   <EndPoints>
-    <!--  example end point
+      <!--example end point-->
     <EndPoint>
       <Id>Petstore</Id>
-      <Url>http://petstore.swagger.wordnik.com/v2/swagger.json</Url>
+      <Url>http://petstore.swagger.io/v2/swagger.json</Url>
       <Namespace>Petstore</Namespace>
       <Suffix>WebProxy</Suffix>
       <BaseProxyClass>Swagger.WebApiProxy.Template.BaseProxy</BaseProxyClass>
@@ -11,6 +11,6 @@
       <ParseOperationIdForProxyName>false</ParseOperationIdForProxyName>
       <AppendAsyncToMethodName>false</AppendAsyncToMethodName>
     </EndPoint>
-    -->
+    
   </EndPoints>
 </SwaggerApiProxySettings>
