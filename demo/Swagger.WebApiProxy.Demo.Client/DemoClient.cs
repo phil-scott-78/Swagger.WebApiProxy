@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Net.Http.Headers;
 
 // ReSharper disable All
 
@@ -160,7 +161,7 @@ await EnsureSuccessStatusCodeAsync(response);
 /// <param name="petId">ID of pet to update</param>
 /// <param name="additionalMetadata">Additional data to pass to server</param>
 /// <param name="file">file to upload</param>
-public async Task<ApiResponse> uploadFile (long petId, string additionalMetadata = null, string  file = null)
+public async Task<ApiResponse> uploadFile (long petId, string additionalMetadata = null, Tuple<string, byte[]> file = null)
 {
 var url = "pet/{petId}/uploadImage"
 	.Replace("{petId}", petId.ToString());
@@ -171,9 +172,8 @@ var formKeyValuePairs = new List<KeyValuePair<string, string>>();
 if (additionalMetadata != null){
 formKeyValuePairs.Add(new KeyValuePair<string, string>("additionalMetadata", additionalMetadata));
 }
-if (file != null){
-formKeyValuePairs.Add(new KeyValuePair<string, string>("file", file));
-}
+var fileContent = new ByteArrayContent(file.Item2);
+fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = file.Item1 };
 HttpContent content = new FormUrlEncodedContent(formKeyValuePairs);
 var response = await client.PostAsync(url, content).ConfigureAwait(false);
 await EnsureSuccessStatusCodeAsync(response);
