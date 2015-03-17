@@ -345,12 +345,16 @@
 
 	string GetDefaultType(Parameter x)
 	{
-	    if (x.Type.TypeName == "file")
+	    var typeName = x.Type.TypeName;
+	    if (typeName == "file")
 	    {
 	        return "Tuple<string, byte[]>";
 	    }
 
-	    var output = x.CollectionFormat == "multi" ? string.Format("List<{0}>", x.Type.TypeName) : x.Type.TypeName;
+	    if (x.Type.IsNullableType)
+	        typeName += "?";
+
+	    var output = x.CollectionFormat == "multi" ? string.Format("List<{0}>", typeName) : typeName;
 	    return output;
 	}
 
@@ -411,13 +415,15 @@
 		WriteLine("// Generated at {0}", DateTime.Now);
     }
 
-    static string FixTypeName(string input)
+    internal static string FixTypeName(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
             return input;
 
 	    //var csharpCodeProvider = new CSharpCodeProvider();
-        var output = input.Replace(" ", "").Replace("[", "<").Replace("]", ">");
+        var output = input.Replace(" ", "");
+        output = SwaggerParser.FixGenericName(output);
+
         if (char.IsLetter(output[0]) == false)
             output = "_" + output;
 
@@ -632,7 +638,8 @@
 					}
                 }
 
-                classDefinition.Name = classDefinition.Name.Replace("[", "<").Replace("]", ">");
+                
+                classDefinition.Name = FixGenericName(classDefinition.Name);
                 if (classDefinition.Name.Equals("Void", StringComparison.InvariantCulture))
                 {
                     addIt = false;
@@ -685,8 +692,8 @@
 					typeName = FixTypeName(name + "Values");    
                 }                
             }
-			
-			typeName = typeName.Replace("[", "<").Replace("]", ">");
+
+            typeName = FixGenericName(typeName);
 			TypeDefinition type = new TypeDefinition(typeName, name, enumValues, isNullable);
             return type;
         }
@@ -694,6 +701,27 @@
         internal string ParseRef(string input)
         {
             return input.StartsWith("#/definitions/") ? input.Substring("#/definitions/".Length) : input;
+        }
+
+
+        public static string FixGenericName(string input)
+        {
+            if (input.Contains("[") == false || input.Contains("]") == false)
+            {
+                return input;
+            }
+
+            if (input.StartsWith("Dictionary["))
+            {
+                return input.Replace("[", "<").Replace("]", ">");
+            }
+
+            var firstBracket = input.IndexOf("[" , StringComparison.InvariantCulture) + 1;
+			var secondBracket = input.IndexOf("]", StringComparison.InvariantCulture);
+            string typeName = input.Substring(firstBracket, secondBracket - firstBracket);
+            string genericName = input.Substring(0, firstBracket - 1);
+
+			return typeName + genericName;
         }
 
         internal string GetTypeName(JToken token, out bool isNullable)
@@ -724,16 +752,6 @@
             if (nullableToken != null)
             {
                 hasNullFlag = true;
-            }
-
-            bool required = true;
-			var requiredToken = token["required"]  as JValue;
-            if (requiredToken != null)
-            {
-                if ((bool) requiredToken.Value == false)
-                {
-                    required = false;
-                }
             }
 
 			if (type.Value.Equals("array"))
