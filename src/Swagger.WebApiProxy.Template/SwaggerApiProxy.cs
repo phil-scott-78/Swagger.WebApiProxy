@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Net.Http.Headers;
 
 // ReSharper disable All
 
@@ -96,9 +97,9 @@ return await response.Content.ReadAsAsync<List<Pet>>().ConfigureAwait(false);
 }
 }
 /// <summary>
-/// Returns a pet when ID &lt; 10.  ID &gt; 10 or nonintegers will simulate API error conditions
+/// Returns a single pet
 /// </summary>
-/// <param name="petId">ID of pet that needs to be fetched</param>
+/// <param name="petId">ID of pet to return</param>
 public async Task<Pet> getPetById (long petId)
 {
 var url = "pet/{petId}"
@@ -158,7 +159,7 @@ await EnsureSuccessStatusCodeAsync(response);
 /// <param name="petId">ID of pet to update</param>
 /// <param name="additionalMetadata">Additional data to pass to server</param>
 /// <param name="file">file to upload</param>
-public async Task<ApiResponse> uploadFile (long petId, string additionalMetadata = null,  file = null)
+public async Task<ApiResponse> uploadFile (long petId, string additionalMetadata = null, Tuple<string, byte[]> file = null)
 {
 var url = "pet/{petId}/uploadImage"
 	.Replace("{petId}", petId.ToString());
@@ -169,9 +170,8 @@ var formKeyValuePairs = new List<KeyValuePair<string, string>>();
 if (additionalMetadata != null){
 formKeyValuePairs.Add(new KeyValuePair<string, string>("additionalMetadata", additionalMetadata));
 }
-if (file != null){
-formKeyValuePairs.Add(new KeyValuePair<string, string>("file", file));
-}
+var fileContent = new ByteArrayContent(file.Item2);
+fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = file.Item1 };
 HttpContent content = new FormUrlEncodedContent(formKeyValuePairs);
 var response = await client.PostAsync(url, content).ConfigureAwait(false);
 await EnsureSuccessStatusCodeAsync(response);
