@@ -764,7 +764,7 @@
 			if (type.Value.Equals("boolean"))
             {
                 isNullable = true;
-                return "bool";
+                return (hasNullFlag) ? "bool?" : "bool";
             }
 
             if (type.Value.Equals("file"))
