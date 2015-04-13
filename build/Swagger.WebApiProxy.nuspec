@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Swagger.WebApiProxy</id>
-    <version>0.1.24-alpha</version>
+    <version>0.1.26-alpha</version>
     <title>Swagger WebApi Proxy Generator</title>
     <description>Swagger.WebApiProxy is a T4 template that takes a Swagger 2.0 Spec and generators a proxy based on the WebAPI 2.0 Client Libraries</description>
     <authors>Phil Scott</authors>

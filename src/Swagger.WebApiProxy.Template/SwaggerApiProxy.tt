@@ -95,8 +95,8 @@
 					string parameters = string.Join(", ", operationDef.Parameters
 									.OrderByDescending(i=>i.IsRequired).Select(
 										x => (x.IsRequired == false) ?
-										 string.Format("{0} {1} = {2}", GetDefaultType(x), x.Type.Name, GetDefaultValue(x)) 
-										 :  string.Format("{0} {1}", x.Type.TypeName, x.Type.Name)));
+										 string.Format("{0} {1} = {2}", GetDefaultType(x), x.Type.GetCleanTypeName(), GetDefaultValue(x)) 
+										 :  string.Format("{0} {1}", x.Type.TypeName, x.Type.GetCleanTypeName())));
 										 
 					WriteLine("/// <summary>");
 					WriteLine("/// {0}", (SecurityElement.Escape(operationDef.Description) ?? "").Replace("\n", "\n///"));
@@ -117,7 +117,7 @@
 					foreach (var parameter in operationDef.Parameters.Where(i=>i.ParameterIn == ParameterIn.Path))
 					{
 						WriteLine("");
-						Write("\t.Replace(\"{{{0}}}\", {0}.ToString())", parameter.Type.Name);
+						Write("\t.Replace(\"{{{0}}}\", {0}.ToString())", parameter.Type.GetCleanTypeName());
 					}
 					WriteLine(";");
 
@@ -125,10 +125,10 @@
 				    if (queryParams != null && queryParams.Count > 0)
 				    {
 						foreach (var parameter in queryParams)
-						{
+						{						
 							if (parameter.IsRequired == false)
 						    {
-						        WriteNullIfStatementOpening(parameter.Type.Name, parameter.Type.TypeName);
+						        WriteNullIfStatementOpening(parameter.Type.GetCleanTypeName(), parameter.Type.TypeName);
 						    }
 
 						    if (string.IsNullOrWhiteSpace(parameter.CollectionFormat) == false)
@@ -136,23 +136,23 @@
 								// array
 								if (parameter.CollectionFormat.Equals("csv", StringComparison.OrdinalIgnoreCase))
 						        {
-						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\",\", {0}));", parameter.Type.Name);
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\",\", {1}));", parameter.Type.Name, parameter.Type.GetCleanTypeName());
 						        }
 						        else if (parameter.CollectionFormat.Equals("ssv", StringComparison.OrdinalIgnoreCase))
 						        {
-						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\" \", {0}));", parameter.Type.Name);
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\" \", {1}));", parameter.Type.Name, parameter.Type.GetCleanTypeName());
 						        }
 								else if (parameter.CollectionFormat.Equals("tsv", StringComparison.OrdinalIgnoreCase))
 						        {
-						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\"\t\", {0}));", parameter.Type.Name);
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\"\t\", {1}));", parameter.Type.Name, parameter.Type.GetCleanTypeName());
 						        }
 								else if (parameter.CollectionFormat.Equals("pipes", StringComparison.OrdinalIgnoreCase))
 						        {
-						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\"\t\", {0}));", parameter.Type.Name);
+						            WriteLine("url = AppendQuery(url, \"{0}\", string.Join(\"\t\", {1}));", parameter.Type.Name, parameter.Type.GetCleanTypeName());
 						        }
 								else if (parameter.CollectionFormat.Equals("multi", StringComparison.OrdinalIgnoreCase))
 								{
-								    WriteLine("foreach(var item in {0})", parameter.Type.Name);
+								    WriteLine("foreach(var item in {0})", parameter.Type.GetCleanTypeName());
 								    WriteLine("{");
 								    WriteLine("url = AppendQuery(url, \"{0}\", item.ToString());", parameter.Type.Name);
 								    WriteLine("}");
@@ -160,12 +160,12 @@
 								else
 								{
 									Warning("unknown collection format found");
-								    WriteLine("url = AppendQuery(url, \"{0}\", {0}.ToString());", parameter.Type.Name);
+								    WriteLine("url = AppendQuery(url, \"{0}\", {1}.ToString());", parameter.Type.Name, parameter.Type.GetCleanTypeName());
 								}
 						    }
 						    else
 						    {
-								WriteLine("url = AppendQuery(url, \"{0}\", {0}.ToString());", parameter.Type.Name);    
+								WriteLine("url = AppendQuery(url, \"{0}\", {1}.ToString());", parameter.Type.Name, parameter.Type.GetCleanTypeName());    
 						    }
 
 						    
@@ -711,7 +711,7 @@
                 return input;
             }
 
-            if (input.StartsWith("Dictionary["))
+            if (input.StartsWith("Dictionary[") || input.StartsWith("IDictionary["))
             {
                 return input.Replace("[", "<").Replace("]", ">");
             }
@@ -915,6 +915,11 @@
         public string TypeName { get; set; }
 		public string[] EnumValues { get; set; }
 		public bool IsNullableType { get; set; }
+
+		public string GetCleanTypeName()
+		{
+			return Name.Replace("$", "");
+		}
     }
 
     public class ProxyDefinition
